@@ -9,9 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Warga extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'wargas';
 
-    protected $guarded = ['id'];
-
+    protected $guarded = ['id_warga'];
 }

@@ -10,22 +10,11 @@ class IndexController extends Component
 {
     protected string $layout = 'layouts.app';
 
-    public function mount()
-    {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Unauthorized');
-        }
-
-        $this->loadStats();
-    }
+    public function mount() {}
 
     public function render()
     {
-        return view('livewire.user.admin.index-controller', [
+        return view('livewire.user.admin.index', [
             'title' => 'Admin Dashboard'
         ]);
     }

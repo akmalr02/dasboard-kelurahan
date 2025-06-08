@@ -12,36 +12,12 @@ class IndexController extends Component
 
     public $userProfile = null;
 
-    public function mount()
-    {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
-        if (Auth::user()->role !== 'warga') {
-            abort(403, 'Unauthorized');
-        }
-
-        $this->loadUserProfile();
-    }
-
-    public function loadUserProfile()
-    {
-        try {
-            $this->userProfile = Auth::user();
-        } catch (\Exception $e) {
-            $this->userProfile = null;
-        }
-    }
-
-    public function refreshProfile()
-    {
-        $this->loadUserProfile();
-        session()->flash('message', 'Profil berhasil direfresh!');
-    }
+    public function mount() {}
 
     public function render()
     {
-        return view('livewire.user.warga.index');
+        return view('livewire.user.warga.index', [
+            'title' => 'Warga Dashboard'
+        ]);
     }
 }

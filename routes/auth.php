@@ -12,36 +12,31 @@ use App\Livewire\User\RW\IndexController as RwIndexController;
 Route::get('/login', AuthController::class)->name('login');
 
 // Logout
-Route::post('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect()->route('login');
+Route::get('/logout', function () {
+    $authComponent = new \App\Livewire\User\AuthController();
+    return $authComponent->logout();
 })->name('logout');
 
-// Halaman dashboard berdasarkan role - hanya jika login
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', AdminIndexController::class)
-        ->name('admin.dashboard');
+Route::get('/admin/dashboard', AdminIndexController::class)
+    ->middleware(['auth'])
+    ->name('admin.dashboard');
 
-    Route::get('/warga/dashboard', WargaIndexController::class)
-        ->name('warga.dashboard');
+Route::get('/warga/dashboard', WargaIndexController::class)
+    ->middleware(['auth'])
+    ->name('warga.dashboard');
 
-    Route::get('/rt/dashboard', RtIndexController::class)
-        ->name('rt.dashboard');
+Route::get('/rt/dashboard', RtIndexController::class)
+    ->middleware(['auth'])
+    ->name('rt.dashboard');
 
-    Route::get('/rw/dashboard', RwIndexController::class)
-        ->name('rw.dashboard');
-
-    Route::get('/dashboard', function () {
-        $user = Auth::user();
-
-        return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'warga' => redirect()->route('warga.dashboard'),
-            'rt', 'pengelola_rt' => redirect()->route('rt.dashboard'),
-            'rw', 'pengelola_rw' => redirect()->route('rw.dashboard'),
-            default => redirect()->route('login')
-        };
-    })->name('dashboard');
-});
+Route::get('/rw/dashboard', RwIndexController::class)
+    ->middleware(['auth'])
+    ->name('rw.dashboard');
+// Auth::check()
+Route::get('/cek-login', function () {
+    if (Auth::check()) {
+        return 'Sudah login sebagai: ' . Auth::user()->email;
+    } else {
+        return 'Belum login';
+    }
+})->middleware('web'); // penting!

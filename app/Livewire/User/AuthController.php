@@ -3,6 +3,9 @@
 namespace App\Livewire\User;
 
 use Livewire\Component;
+use App\Models\User;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\RateLimiter;
@@ -11,15 +14,17 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Component
 {
     protected string $layout = 'layouts.app';
-    public string $email = '';
-    public string $password = '';
+
+    public $email, $password;
     public bool $remember = false;
 
-    protected $rules = [
-        'email'    => 'required|email',
-        'password' => 'required|min:6',
-    ];
-
+    public function rules()
+    {
+        return [
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'min:6'],
+        ];
+    }
 
     protected $messages = [
         'email.required' => 'Email wajib diisi.',
@@ -27,13 +32,6 @@ class AuthController extends Component
         'password.required' => 'Password wajib diisi.',
         'password.min' => 'Password minimal 6 karakter.',
     ];
-
-    public function mount()
-    {
-        if (Auth::check()) {
-            return $this->redirectBasedOnRole(Auth::user());
-        }
-    }
 
     public function render()
     {
@@ -44,20 +42,9 @@ class AuthController extends Component
 
     public function login()
     {
-        // dd([
-        //     'email' => $this->email,
-        //     'password' => $this->password,
-        // ]);
+        // logger('Form login dipanggil');
 
-        // Rate limiting untuk mencegah brute force
-        $key = 'login-attempts:' . request()->ip();
-
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            $seconds = RateLimiter::availableIn($key);
-            throw ValidationException::withMessages([
-                'email' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik."
-            ]);
-        }
+        // dd($this->email, $this->password, $this->remember);
 
         $this->validate();
 
@@ -66,54 +53,35 @@ class AuthController extends Component
             'password' => $this->password,
         ];
 
-        // dd($credentials);
-
-        $attempt = Auth::attempt($credentials, $this->remember);
-
-        if ($attempt) {
-            RateLimiter::clear($key);
-
-            session()->regenerate();
-            $user = Auth::user();
-
-            logger('User login successful', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'role' => $user->role,
-                'ip' => request()->ip()
-            ]);
-
-            return $this->redirectBasedOnRole($user);
+        if (!Auth::attempt($credentials, $this->remember)) {
+            $this->addError('email', 'Email atau password salah.');
+            return null;
         }
 
-        // RateLimiter::hit($key, 60);
+        $user = Auth::user();
 
-        // logger('Failed login attempt', [
-        //     'email' => $this->email,
-        //     'ip' => request()->ip()
-        // ]);
+        // logger('Login berhasil sebagai ' . $user->name);
 
-        // $this->addError('email', 'Email atau password salah.');
+        session()->flash('message', 'Login berhasil sebagai: ' . $user->name . ' (' . $user->role . ')');
+        // dd('Login berhasil sebagai', Auth::user());
 
-        // $this->password = '';
-    }
-
-    private function redirectBasedOnRole($user)
-    {
-        return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'warga' => redirect()->route('warga.dashboard'),
-            'rt' => redirect()->route('rt.dashboard'),
-            'rw' => redirect()->route('rw.dashboard'),
-            default => redirect()->route('login')->withErrors(['role' => 'Role tidak dikenali']),
+        $redirectUrl = match ($user->role) {
+            'admin'         => route('admin.dashboard'),
+            'warga'         => route('warga.dashboard'),
+            'pengelola_rt'  => route('rt.dashboard'),
+            'pengelola_rw'  => route('rw.dashboard'),
+            default => route('login'),
         };
+
+        // dd($redirectUrl);
+        return redirect()->to($redirectUrl);
     }
 
     public function logout()
     {
+        // dd('berhasil');
         $user = Auth::user();
 
-        // Log logout
         if ($user) {
             logger('User logout', [
                 'user_id' => $user->id,
@@ -126,16 +94,5 @@ class AuthController extends Component
         session()->regenerateToken();
 
         return redirect()->route('login')->with('message', 'Anda telah logout.');
-    }
-
-    // Method untuk clear error saat user mulai mengetik
-    public function updatedEmail()
-    {
-        $this->resetErrorBag('email');
-    }
-
-    public function updatedPassword()
-    {
-        $this->resetErrorBag('password');
     }
 }
