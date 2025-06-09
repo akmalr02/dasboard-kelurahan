@@ -18,6 +18,7 @@
     </main>
     @include('components.layouts.footer')
     @livewireScripts
+    {{-- @stack('scripts') --}}
 </body>
 
 </html>
