@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('surat_kematians', function (Blueprint $table) {
             $table->id('id_kematian');
+            $table->unsignedBigInteger('id_warga')->nullable();
+            $table->foreign('id_warga')->references('id_warga')->on('wargas')->onDelete('set null');
             $table->string('nama_warga', 225)->nullable();
             $table->string('tempat_lahir', 100)->nullable();
             $table->date('tanggal_lahir')->nullable();

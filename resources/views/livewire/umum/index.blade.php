@@ -141,8 +141,8 @@
             <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Total WNI</p>
-                        <p class="text-2xl font-bold text-blue-600" id="summary-wni">-</p>
+                        <p class="text-sm font-medium text-gray-600">Total WNA</p>
+                        <p class="text-2xl font-bold text-blue-600" id="summary-wna">-</p>
                     </div>
                     <div class="bg-blue-100 p-3 rounded-full">
                         <span class="text-2xl">👥</span>
@@ -153,8 +153,8 @@
             <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-gray-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Total WNA</p>
-                        <p class="text-2xl font-bold text-gray-600" id="summary-wna">-</p>
+                        <p class="text-sm font-medium text-gray-600">Total WNI</p>
+                        <p class="text-2xl font-bold text-gray-600" id="summary-wni">-</p>
                     </div>
                     <div class="bg-gray-100 p-3 rounded-full">
                         <span class="text-2xl">👥</span>

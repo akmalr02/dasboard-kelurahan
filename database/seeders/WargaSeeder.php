@@ -9,11 +9,11 @@ class WargaSeeder extends Seeder
 {
     public function run(): void
     {
-        $totalNKK = 100;
+        $totalNKK = 200;
         $maxPerNKK = 5;
         $rtPerRw = 12;
         $rwCount = 8;
-        $batchSize = 100; 
+        $batchSize = 300;
 
         $wargaId = 1;
         $wargaBatch = [];
@@ -40,6 +40,7 @@ class WargaSeeder extends Seeder
             for ($j = 0; $j < $anggotaKeluarga; $j++) {
                 $isKepalaKeluarga = $j === 0;
                 $jenisKelamin = fake()->randomElement(['L', 'P']);
+                $statusPenduduk = fake()->randomElement(['hidup', 'pindah', 'meninggal']);
 
                 $wargaBatch[] = [
                     'id_warga' => $wargaId++,
@@ -52,15 +53,19 @@ class WargaSeeder extends Seeder
                     'pekerjaan' => fake()->jobTitle(),
                     'alamat' => fake()->address(),
                     'tempat_lahir' => fake()->city(),
-                    'tanggal_lahir' => fake()->date('Y-m-d', '-18 years'),
+                    'tanggal_lahir' => fake()->date('Y-m-d'),
                     'golongan_darah' => fake()->randomElement(['A', 'B', 'AB', 'O', 'tidak tahu']),
                     'status_perkawinan' => fake()->randomElement(['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati']),
                     'pendidikan' => fake()->randomElement(['Tidak Sekolah', 'SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3']),
                     'status_keluarga' => $isKepalaKeluarga ? 'kepala_keluarga' : ($jenisKelamin == 'P' && $j == 1 ? 'istri' : ($j > 1 ? 'anak' : 'lainnya')),
+                    'status_penduduk' => $statusPenduduk,
+                    'tanggal_meninggal' => $statusPenduduk === 'meninggal'
+                        ? fake()->dateTimeBetween('-5 years', 'now')->format('Y-m-d')
+                        : null,
                     'id_RT' => $rtId,
                     'id_RW' => $rwId,
                     'jabatan' => 'warga',
-                    'id_user' => null, // Set null terlebih dahulu, akan diupdate setelah user dibuat
+                    'id_user' => null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

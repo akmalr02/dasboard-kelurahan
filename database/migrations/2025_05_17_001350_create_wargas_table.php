@@ -27,6 +27,8 @@ return new class extends Migration
             $table->enum('status_perkawinan', ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati']);
             $table->enum('pendidikan', ['Tidak Sekolah', 'SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3'])->nullable();
             $table->enum('status_keluarga', ['kepala_keluarga', 'istri', 'anak', 'lainnya'])->default('lainnya');
+            $table->enum('status_penduduk', ['hidup', 'pindah', 'meninggal'])->default('hidup');
+            $table->date('tanggal_meninggal')->nullable();
             $table->unsignedBigInteger('id_RT')->nullable();
             $table->unsignedBigInteger('id_RW')->nullable();
             $table->enum('jabatan', ['admin', 'warga', 'ketua_RT', 'ketua_RW'])->default('warga');
