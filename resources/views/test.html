@@ -1,56 +1,322 @@
-<div>
-  <nav class="bg-sky-500">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-16 items-center">
-        <!-- KIRI: Logo -->
-        <div class="flex items-center">
-          <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-2 rounded-md px-3 py-2 hover:bg-sky-600 transition duration-200">
-            <img class="w-10 h-10" src="icon/kelurahan.png" alt="Company Logo">
-            <span class="text-white font-semibold text-base">Kelurahan Kramat</span>
-          </a>
-        </div>
+<?php
 
-        <!-- TENGAH: Menu -->
-        <div class="hidden md:flex flex-1 justify-center space-x-4">
-          <a href="{{ route('dashboard') }}" wire:navigate
-            class="{{ request()->routeIs('dashboard') ? 'bg-gray-900 text-white' : 'text-white hover:bg-gray-700 hover:text-white' }} 
-                  rounded-md px-3 py-2 text-sm font-medium">
-            Dashboard
-          </a>
-          <a href="{{ route('dashboard2') }}" wire:navigate
-            class="{{ request()->routeIs('dashboard2') ? 'bg-gray-900 text-white' : 'text-white hover:bg-gray-700 hover:text-white' }} 
-                  rounded-md px-3 py-2 text-sm font-medium">
-            Team
-          </a>
-        </div>
+namespace App\Livewire\User\Admin;
 
-        <!-- KANAN: Tombol Login -->
-        <div class="hidden md:flex justify-end">
-          <a href="#" class="flex items-center text-white hover:bg-gray-700 hover:text-white rounded-md px-4 py-2 text-sm font-medium">
-            <x-simpleline-login class="inline-block w-5 h-5 " />
-            <span class="font-semibold text-base ">Login</span>
-          </a>
-        </div>
+use App\Models\User;
+use App\Models\Warga;
+use Livewire\Component;
 
-        
-        <div class="md:hidden">
-          <button id="mobile-menu-button" class="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white">
-            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
+class CreateUserController extends Component
+{
+    public $email, $password, $selectedWarga, $role;
+    public $show = false;
+
+    public $availableWargas = [];
+
+    protected function rules()
+    {
+        return [
+            'role' => 'required|in:pengelola_rt,pengelola_rw',
+            'selectedWarga' => 'required|exists:wargas,id_warga',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+        ];
+    }
+
+    public function mount()
+    {
+        $this->role = 'pengelola_rt'; // default
+        $this->loadAvailableWargas();
+    }
+
+    public function updatedRole($value)
+    {
+        $this->selectedWarga = null;
+        $this->loadAvailableWargas();
+    }
+
+    public function loadAvailableWargas()
+    {
+        if ($this->role === 'pengelola_rt') {
+            // Ambil RT yang sudah memiliki pengelola
+            $usedRTs = Warga::whereNotNull('id_user')
+                ->whereHas('user', function ($query) {
+                    $query->where('role', 'pengelola_rt');
+                })
+                ->select('id_RT', 'id_RW')
+                ->get()
+                ->map(function ($item) {
+                    return $item->id_RT . '_' . $item->id_RW;
+                })
+                ->toArray();
+
+            // Modifikasi: Ambil warga yang bisa menjadi ketua RT
+            // Tidak hanya yang sudah memiliki jabatan ketua_RT, tapi juga warga biasa
+            $this->availableWargas = Warga::where(function ($query) {
+                $query->where('jabatan', 'ketua_RT')
+                    ->orWhere('jabatan', 'warga') // Tambahkan warga biasa
+                    ->orWhereNull('jabatan'); // Atau yang belum memiliki jabatan
+            })
+                ->where('status_penduduk', 'hidup')
+                ->whereNull('id_user')
+                ->get()
+                ->filter(function ($warga) use ($usedRTs) {
+                    $rtRwKey = $warga->id_RT . '_' . $warga->id_RW;
+                    return !in_array($rtRwKey, $usedRTs);
+                })
+                ->sortBy(['id_RW', 'id_RT'])
+                ->values();
+        } elseif ($this->role === 'pengelola_rw') {
+            // Ambil RW yang sudah memiliki pengelola
+            $usedRWs = Warga::whereNotNull('id_user')
+                ->whereHas('user', function ($query) {
+                    $query->where('role', 'pengelola_rw');
+                })
+                ->pluck('id_RW')
+                ->toArray();
+
+            // Modifikasi: Ambil warga yang bisa menjadi ketua RW
+            $this->availableWargas = Warga::where(function ($query) {
+                $query->where('jabatan', 'ketua_RW')
+                    ->orWhere('jabatan', 'warga') // Tambahkan warga biasa
+                    ->orWhereNull('jabatan'); // Atau yang belum memiliki jabatan
+            })
+                ->where('status_penduduk', 'hidup')
+                ->whereNull('id_user')
+                ->whereNotIn('id_RW', $usedRWs)
+                ->orderBy('id_RW')
+                ->get();
+        } else {
+            $this->availableWargas = collect();
+        }
+    }
+
+    public function create()
+    {
+        $this->validate();
+
+        $warga = Warga::findOrFail($this->selectedWarga);
+
+        // Cek duplikasi berdasarkan role
+        if ($this->role === 'pengelola_rt') {
+            // Cek apakah sudah ada pengelola RT untuk RT ini dalam RW yang sama
+            $sudahAda = Warga::where('id_RT', $warga->id_RT)
+                ->where('id_RW', $warga->id_RW)
+                ->whereNotNull('id_user')
+                ->whereHas('user', function ($query) {
+                    $query->where('role', 'pengelola_rt');
+                })
+                ->exists();
+
+            if ($sudahAda) {
+                session()->flash('error', "Sudah ada pengelola untuk RT {$warga->id_RT} RW {$warga->id_RW}.");
+                return;
+            }
+        } elseif ($this->role === 'pengelola_rw') {
+            // Cek apakah sudah ada pengelola RW untuk RW ini
+            $sudahAda = Warga::where('id_RW', $warga->id_RW)
+                ->whereNotNull('id_user')
+                ->whereHas('user', function ($query) {
+                    $query->where('role', 'pengelola_rw');
+                })
+                ->exists();
+
+            if ($sudahAda) {
+                session()->flash('error', "Sudah ada pengelola untuk RW {$warga->id_RW}.");
+                return;
+            }
+        }
+
+        // Buat user baru
+        $user = User::create([
+            'email' => $this->email,
+            'password' => bcrypt($this->password),
+            'role' => $this->role,
+        ]);
+
+        // Update warga dengan id_user dan jabatan
+        $warga->id_user = $user->id_user;
+
+        // UPDATE JABATAN OTOMATIS ketika dijadikan pengelola
+        if ($this->role === 'pengelola_rt') {
+            $warga->jabatan = 'ketua_RT';
+        } elseif ($this->role === 'pengelola_rw') {
+            $warga->jabatan = 'ketua_RW';
+        }
+
+        $warga->save();
+
+        // Reset form dan refresh data
+        $this->reset(['email', 'password', 'selectedWarga']);
+        $this->loadAvailableWargas();
+
+        session()->flash('success', 'User berhasil dibuat dan jabatan warga telah diperbarui.');
+
+        // Tutup modal
+        $this->show = false;
+    }
+
+    public function render()
+    {
+        return view('livewire.user.admin.create-user');
+    }
+}
+
+<div x-data="{ open: @entangle('show'), showPassword: false }">
+    <button @click="open = true" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+        Tambah User
+    </button>
+
+    <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+        <div @click.away="open = false"
+            class="bg-white rounded-xl shadow-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+
+            {{-- Modal Header --}}
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-700">Buat akun baru</h2>
+                <button @click="open = false" aria-label="Tutup modal"
+                    class="text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Flash Messages --}}
+            @foreach (['error' => 'red', 'success' => 'green'] as $type => $color)
+                @if (session()->has($type))
+                    <div class="mb-4 p-3 rounded-lg bg-{{ $color }}-50 border border-{{ $color }}-200">
+                        <div class="text-sm text-{{ $color }}-600">{{ session($type) }}</div>
+                    </div>
+                @endif
+            @endforeach
+
+            <form wire:submit.prevent="create" class="space-y-4">
+                {{-- Role --}}
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-900 mb-2">Pilih Role</label>
+                    <select id="role" wire:model="role"
+                        class="w-full rounded-lg bg-gray-100 border px-4 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 @error('role') border-red-500 @enderror">
+                        <option value="">-- Pilih Role --</option>
+                        <option value="pengelola_rt">Pengelola RT</option>
+                        <option value="pengelola_rw">Pengelola RW</option>
+                    </select>
+                    @error('role')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Warga Selection --}}
+                @if ($role)
+                    <div>
+                        <label for="selectedWarga" class="block text-sm font-medium text-gray-900 mb-2">
+                            Pilih Calon {{ $role === 'pengelola_rt' ? 'Ketua RT' : 'Ketua RW' }}
+                        </label>
+
+                        @if (count($availableWargas) > 0)
+                            <select wire:model="selectedWarga" id="selectedWarga"
+                                class="w-full rounded-lg bg-gray-100 border px-4 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 @error('selectedWarga') border-red-500 @enderror">
+                                <option value="">-- Pilih Warga --</option>
+                                @foreach ($availableWargas as $warga)
+                                    <option value="{{ $warga->id_warga }}">
+                                        {{ $warga->name }} - NIK: {{ $warga->NIK }}
+                                        ({{ $role === 'pengelola_rt' ? "RT $warga->id_RT / RW $warga->id_RW" : "RW $warga->id_RW" }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('selectedWarga')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        @else
+                            <div class="p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm text-yellow-700">
+                                Tidak ada calon {{ $role === 'pengelola_rt' ? 'Ketua RT' : 'Ketua RW' }} yang tersedia.
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
+                {{-- Email & Password --}}
+                @if ($selectedWarga)
+                    {{-- Email --}}
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-900 mb-2">E-mail</label>
+                        <input type="email" id="email" wire:model.defer="email"
+                            class="w-full rounded-lg bg-gray-100 border px-4 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 @error('email') border-red-500 @enderror"
+                            placeholder="Masukkan Email..." autocomplete="email" required>
+                        @error('email')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Password --}}
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-900 mb-2">Password</label>
+                        <div class="relative">
+                            <input :type="showPassword ? 'text' : 'password'" id="password" wire:model.defer="password"
+                                class="w-full rounded-lg bg-gray-100 border px-4 py-2 pr-12 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 @error('password') border-red-500 @enderror"
+                                placeholder="Masukkan Password..." required>
+                            <button type="button" @click="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-blue-600">
+                                <template x-if="!showPassword">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </template>
+                                <template x-if="showPassword">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                    </svg>
+                                </template>
+                            </button>
+                        </div>
+                        @error('password')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Informasi Warga --}}
+                    @php
+                        $selectedWargaData = $availableWargas->firstWhere('id_warga', $selectedWarga);
+                    @endphp
+                    @if ($selectedWargaData)
+                        <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                            <h4 class="text-sm font-medium text-blue-900 mb-2">Data Warga Terpilih:</h4>
+                            <div class="text-sm text-blue-700 space-y-1">
+                                <p><strong>Nama:</strong> {{ $selectedWargaData->name }}</p>
+                                <p><strong>NIK:</strong> {{ $selectedWargaData->NIK }}</p>
+                                <p><strong>Jabatan:</strong>
+                                    {{ ucwords(str_replace('_', ' ', $selectedWargaData->jabatan)) }}</p>
+                                <p><strong>Akan mengelola:</strong>
+                                    {{ $role === 'pengelola_rt' ? "RT {$selectedWargaData->id_RT} / RW {$selectedWargaData->id_RW}" : "RW {$selectedWargaData->id_RW}" }}
+                                </p>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+
+                {{-- Tombol --}}
+                <div class="flex gap-3 pt-4">
+                    <button type="button" @click="open = false"
+                        class="flex-1 bg-gray-200 text-gray-700 py-2 rounded hover:bg-gray-300 transition">
+                        Batal
+                    </button>
+                    @if ($selectedWarga != null)
+                        <button type="submit"
+                            class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 transition"
+                            wire:loading.attr="disabled">
+                            <span wire:loading.remove>Buat User</span>
+                            <span wire:loading>Memproses...</span>
+                        </button>
+                    @endif
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-
-    <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3">
-      <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white">Dashboard</a>
-      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
-      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
-      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
-      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Reports</a>
-    </div>
-  </nav>
 </div>
-
-

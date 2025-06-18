@@ -11,9 +11,10 @@ class WargaSeeder extends Seeder
     {
         $totalNKK = 200;
         $maxPerNKK = 5;
-        $rtPerRw = 12;
-        $rwCount = 8;
         $batchSize = 300;
+
+        $rwCount = 8;
+        $rtPerRw = 6;
 
         $wargaId = 1;
         $wargaBatch = [];
@@ -23,19 +24,12 @@ class WargaSeeder extends Seeder
             $nkkList[] = fake()->numerify('1###############');
         }
 
-        foreach ($nkkList as $nkkIndex => $nkk) {
-            $rwId = (floor($nkkIndex / ($totalNKK / $rwCount)) % $rwCount) + 1;
-            $rtNum = (floor($nkkIndex / ($totalNKK / ($rwCount * $rtPerRw))) % $rtPerRw) + 1;
-
-            $rtData = DB::table('rts')
-                ->where('no_RT', $rtNum)
-                ->where('id_RW', $rwId)
-                ->first();
-
-            if (!$rtData) continue;
-
-            $rtId = $rtData->id_RT;
+        foreach ($nkkList as $index => $nkk) {
             $anggotaKeluarga = rand(1, $maxPerNKK);
+
+            // Hitung RT dan RW berdasarkan indeks NKK
+            $rw = ($index % $rwCount) + 1;
+            $rt = ($index % ($rwCount * $rtPerRw)) % $rtPerRw + 1;
 
             for ($j = 0; $j < $anggotaKeluarga; $j++) {
                 $isKepalaKeluarga = $j === 0;
@@ -62,23 +56,21 @@ class WargaSeeder extends Seeder
                     'tanggal_meninggal' => $statusPenduduk === 'meninggal'
                         ? fake()->dateTimeBetween('-5 years', 'now')->format('Y-m-d')
                         : null,
-                    'id_RT' => $rtId,
-                    'id_RW' => $rwId,
-                    'jabatan' => 'warga',
+                    'id_RT' => $rt,
+                    'id_RW' => $rw,
+                    'role' => 'warga',
                     'id_user' => null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
 
-                // Insert batch jika sudah mencapai batas batch
                 if (count($wargaBatch) >= $batchSize) {
                     DB::table('wargas')->insert($wargaBatch);
-                    $wargaBatch = []; // Reset batch
+                    $wargaBatch = [];
                 }
             }
         }
 
-        // Insert sisa data jika masih ada
         if (!empty($wargaBatch)) {
             DB::table('wargas')->insert($wargaBatch);
         }

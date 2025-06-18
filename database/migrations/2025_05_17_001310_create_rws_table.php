@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('rws', function (Blueprint $table) {
             $table->id('id_RW');
-            $table->string('name_RW', 225);
+            $table->string('name_RW', 225)->nullable();
             $table->integer('no_RW')->nullable();
-            $table->unsignedBigInteger('id_user')->unique();
+            $table->unsignedBigInteger('id_user')->unique()->nullable();
             $table->foreign('id_user')->references('id_user')->on('users');
             $table->timestamps();
         });

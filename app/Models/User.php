@@ -24,13 +24,15 @@ class User extends Authenticatable
     protected $keyType = 'int';
 
     protected $fillable = [
+        'id_user',
         'name',
         'email',
         'password',
         'role',
+        'foto_profil',
+        'ttd_digital'
     ];
 
-    protected $guarded = ['id_user'];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -63,5 +65,10 @@ class User extends Authenticatable
             ->explode(' ')
             ->map(fn(string $name) => Str::of($name)->substr(0, 1))
             ->implode('');
+    }
+
+    public function warga()
+    {
+        return $this->hasOne(Warga::class, 'id_user', 'id_user');
     }
 }

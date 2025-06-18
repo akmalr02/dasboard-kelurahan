@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('rts', function (Blueprint $table) {
             $table->id('id_RT');
-            $table->string('name_RT', 225);
+            $table->string('name_RT', 225)->nullable();
             $table->integer('no_RT')->nullable();
             $table->unsignedBigInteger('id_RW');
-            $table->unsignedBigInteger('id_user')->unique();
+            $table->unsignedBigInteger('id_user')->unique()->nullable();
             $table->foreign('id_RW')->references('id_RW')->on('rws');
             $table->foreign('id_user')->references('id_user')->on('users');
             $table->timestamps();

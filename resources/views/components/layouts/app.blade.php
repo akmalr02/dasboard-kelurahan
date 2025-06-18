@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 
 <head>
     <meta charset="UTF-8">
@@ -11,14 +11,19 @@
     @livewireStyles
 </head>
 
-<body>
-    @include('components.layouts.header')
-    <main>
-        {{ $slot }}
-    </main>
-    @include('components.layouts.footer')
+<body class="h-full flex flex-col">
+
+    <div class="flex flex-col min-h-screen w-full">
+        @include('components.layouts.header')
+
+        <main class="flex-1">
+            {{ $slot }}
+        </main>
+
+        @include('components.layouts.footer')
+    </div>
+
     @livewireScripts
-    {{-- @stack('scripts') --}}
 </body>
 
 </html>

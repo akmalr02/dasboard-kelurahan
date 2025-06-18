@@ -4,12 +4,29 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 Chart.register(ChartDataLabels);
 
 window.chartData = null;
+window.chartInstances = {};
+
+function destroyChart(chartId) {
+    if (window.chartInstances[chartId]) {
+        window.chartInstances[chartId].destroy();
+        delete window.chartInstances[chartId];
+    }
+}
+
+// Function to destroy all charts
+function destroyAllCharts() {
+    Object.keys(window.chartInstances).forEach((chartId) => {
+        destroyChart(chartId);
+    });
+}
 
 document.addEventListener("livewire:init", () => {
     Livewire.on("chartDataWarga", (data) => {
         console.log("Data diterima dari Livewire:", data);
 
         window.chartData = data[0];
+
+        destroyAllCharts();
 
         if (window.chartData) {
             renderchartWargaWNA();
@@ -29,15 +46,16 @@ function renderchartWargaWNA() {
     const ctx = document.getElementById("chartWargaWNA");
     if (!ctx) return;
 
+    destroyChart("chartWargaWNA");
+
     const dataWNA = [
         window.chartData?.WNA?.L ?? 0,
         window.chartData?.WNA?.P ?? 0,
     ];
 
-    new Chart(ctx, {
+    window.chartInstances["chartWargaWNA"] = new Chart(ctx, {
         type: "doughnut",
         data: {
-            labels: ["Laki-laki", "Perempuan"],
             datasets: [
                 {
                     label: "Jumlah Warga WNA",
@@ -77,16 +95,17 @@ function renderchartWargaWNI() {
     const ctx = document.getElementById("chartWargaWNI");
     if (!ctx) return;
 
+    destroyChart("chartWargaWNI");
+
     const dataWNI = [
         window.chartData?.WNI?.L ?? 0,
         window.chartData?.WNI?.P ?? 0,
     ];
 
     // console.log(dataWNI);
-    new Chart(ctx, {
+    window.chartInstances["chartWargaWNI"] = new Chart(ctx, {
         type: "doughnut",
         data: {
-            labels: ["Laki-laki", "Perempuan"],
             datasets: [
                 {
                     label: "Jumlah Warga WNI",
@@ -128,14 +147,15 @@ function renderTotalWarga() {
     const ctx = document.getElementById("chartTotalWarga");
     if (!ctx) return;
 
+    destroyChart("chartTotalWarga");
+
     const data = [
         window.chartData?.TOTAL?.L ?? 0,
         window.chartData?.TOTAL?.P ?? 0,
     ];
-    new Chart(ctx, {
+    window.chartInstances["chartTotalWarga"] = new Chart(ctx, {
         type: "doughnut",
         data: {
-            labels: ["Laki-laki", "Perempuan"],
             datasets: [
                 {
                     label: "Total Warga",
@@ -174,6 +194,8 @@ function renderChartKelahiran() {
     const ctx = document.getElementById("chartKelahiran");
     if (!ctx) return;
 
+    destroyChart("chartKelahiran");
+
     const years = Object.keys(window.chartData?.dataKelahiran || {});
 
     const kelahiranL = [
@@ -194,7 +216,7 @@ function renderChartKelahiran() {
     // console.log("laki-laki", kelahiranL);
     // console.log("perempuan", kelahiranP);
 
-    new Chart(ctx, {
+    window.chartInstances["chartKelahiran"] = new Chart(ctx, {
         type: "bar",
         data: {
             labels: ["2021", "2022", "2023", "2024", "2025"],
@@ -249,6 +271,8 @@ function renderChartKematian() {
     const ctx = document.getElementById("chartKematian");
     if (!ctx) return;
 
+    destroyChart("chartKematian");
+
     const years = Object.keys(window.chartData?.dataKematian || {});
 
     const kematianL = [
@@ -269,7 +293,7 @@ function renderChartKematian() {
     // console.log("laki-laki", kematianL);
     // console.log("perempuan", kematianP);
 
-    new Chart(ctx, {
+    window.chartInstances["chartKematian"] = new Chart(ctx, {
         type: "bar",
         data: {
             labels: years,
@@ -324,6 +348,8 @@ function renderChartGenerasi() {
     const ctx = document.getElementById("chartGenerasi");
     if (!ctx) return;
 
+    destroyChart("chartGenerasi");
+
     const generations = [
         "Pre-Boomer",
         "Baby Boomer",
@@ -370,7 +396,7 @@ function renderChartGenerasi() {
         "rgba(239, 68, 68, 0.8)",
     ];
 
-    new Chart(ctx, {
+    window.chartInstances["chartGenerasi"] = new Chart(ctx, {
         type: "bar",
         data: {
             labels: generations,
@@ -419,6 +445,8 @@ function renderChartPerkawinan() {
     const ctx = document.getElementById("chartPerkawinan");
     if (!ctx) return;
 
+    destroyChart("chartPerkawinan");
+
     const categories = ["Belum Kawin", "Kawin", "Cerai Mati", "Cerai Hidup"];
     const dataPerkawinan = [
         window.chartData?.perkawinan?.["Belum Kawin"] ?? 0,
@@ -435,7 +463,7 @@ function renderChartPerkawinan() {
         "rgba(79, 70, 229, 0.8)",
     ];
 
-    new Chart(ctx, {
+    window.chartInstances["chartPerkawinan"] = new Chart(ctx, {
         type: "bar",
         data: {
             labels: categories,
@@ -483,6 +511,8 @@ function renderChartAgama() {
     const ctx = document.getElementById("chartAgama");
     if (!ctx) return;
 
+    destroyChart("chartAgama");
+
     const categories = [
         "Islam",
         "Kristen",
@@ -529,7 +559,7 @@ function renderChartAgama() {
         "rgba(239, 68, 68, 0.8)",
     ];
 
-    new Chart(ctx, {
+    window.chartInstances["chartAgama"] = new Chart(ctx, {
         type: "bar",
         data: {
             labels: categories,
@@ -576,6 +606,8 @@ function renderChartPendidikan() {
     const ctx = document.getElementById("chartPendidikan");
     if (!ctx) return;
 
+    destroyChart("chartPendidikan");
+
     const tingkatan = [
         "S3",
         "S2",
@@ -620,7 +652,7 @@ function renderChartPendidikan() {
         "rgba(107, 114, 128, 0.8)",
     ];
 
-    new Chart(ctx, {
+    window.chartInstances["chartPendidikan"] = new Chart(ctx, {
         type: "bar",
         data: {
             labels: tingkatan,
