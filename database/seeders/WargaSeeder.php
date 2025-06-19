@@ -13,23 +13,20 @@ class WargaSeeder extends Seeder
         $maxPerNKK = 5;
         $batchSize = 300;
 
-        $rwCount = 8;
-        $rtPerRw = 6;
-
-        $wargaId = 1;
-        $wargaBatch = [];
+        $rtIds = DB::table('rts')->pluck('id_RT')->toArray();
+        $rwIds = DB::table('rws')->pluck('id_RW')->toArray();
 
         $nkkList = [];
         for ($i = 0; $i < $totalNKK; $i++) {
             $nkkList[] = fake()->numerify('1###############');
         }
 
+        $wargaBatch = [];
         foreach ($nkkList as $index => $nkk) {
             $anggotaKeluarga = rand(1, $maxPerNKK);
 
-            // Hitung RT dan RW berdasarkan indeks NKK
-            $rw = ($index % $rwCount) + 1;
-            $rt = ($index % ($rwCount * $rtPerRw)) % $rtPerRw + 1;
+            $id_RT = fake()->randomElement($rtIds);
+            $id_RW = fake()->randomElement($rwIds);
 
             for ($j = 0; $j < $anggotaKeluarga; $j++) {
                 $isKepalaKeluarga = $j === 0;
@@ -37,7 +34,6 @@ class WargaSeeder extends Seeder
                 $statusPenduduk = fake()->randomElement(['hidup', 'pindah', 'meninggal']);
 
                 $wargaBatch[] = [
-                    'id_warga' => $wargaId++,
                     'NIK' => fake()->unique()->numerify('1###############'),
                     'NKK' => $nkk,
                     'name' => fake()->name(),
@@ -53,13 +49,10 @@ class WargaSeeder extends Seeder
                     'pendidikan' => fake()->randomElement(['Tidak Sekolah', 'SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3']),
                     'status_keluarga' => $isKepalaKeluarga ? 'kepala_keluarga' : ($jenisKelamin == 'P' && $j == 1 ? 'istri' : ($j > 1 ? 'anak' : 'lainnya')),
                     'status_penduduk' => $statusPenduduk,
-                    'tanggal_meninggal' => $statusPenduduk === 'meninggal'
-                        ? fake()->dateTimeBetween('-5 years', 'now')->format('Y-m-d')
-                        : null,
-                    'id_RT' => $rt,
-                    'id_RW' => $rw,
+                    'tanggal_meninggal' => $statusPenduduk === 'meninggal' ? fake()->dateTimeBetween('-5 years', 'now')->format('Y-m-d') : null,
+                    'id_RT' => $id_RT,
+                    'id_RW' => $id_RW,
                     'role' => 'warga',
-                    'id_user' => null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

@@ -30,7 +30,6 @@ class CreateUserController extends Component
     {
         // Ambil hanya warga yang belum punya user dan jabatannya masih warga
         $this->availableWargas = Warga::where('role', 'warga')
-            ->whereNull('id_user')
             ->where('status_penduduk', 'hidup')
             ->get();
     }
@@ -46,15 +45,7 @@ class CreateUserController extends Component
 
     public function create()
     {
-
         $this->validate();
-
-        // dd([
-        //     'email' => $this->email,
-        //     'password' => $this->password,
-        //     'selectedWarga' => $this->selectedWarga,
-        //     'role' => $this->role,
-        // ]);
 
         $warga = Warga::find($this->selectedWarga);
 
@@ -63,11 +54,7 @@ class CreateUserController extends Component
             return;
         }
 
-        if ($warga->id_user !== null || User::where('id_user', $warga->id_warga)->exists()) {
-            $this->addError('selectedWarga', 'Warga ini sudah memiliki akun user.');
-            return;
-        }
-
+        // Cek apakah RT/RW sudah memiliki pengelola
         if ($this->role === 'pengelola_rt') {
             $sudahAda = Warga::where('id_RT', $warga->id_RT)
                 ->where('role', 'ketua_RT')
@@ -88,60 +75,56 @@ class CreateUserController extends Component
             }
         }
 
-        // Buat user
+        // Buat user dengan id_user = id_warga
         $user = User::create([
             'name' => $warga->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
             'role' => $this->role,
+            'id_warga' => $warga->id_warga,
+            'id_rt' => $warga->id_RT,
+            'id_rw' => $warga->id_RW,
         ]);
 
-        // Update jabatan warga dan hubungkan ke user
+        // dd($user);
+
+        // Update role warga
         $warga->update([
             'role' => $this->role === 'pengelola_rt' ? 'ketua_RT' : 'ketua_RW',
-            'id_user' => $user->id,
         ]);
 
-        // Jika pengelola RT, update tabel rts agar name_RT = nama user
+        // Update tabel RT atau RW untuk set name dan id_user
         if ($this->role === 'pengelola_rt') {
             Rt::where('id_RT', $warga->id_RT)->update([
                 'name_RT' => $warga->name,
-                'id_user' => $user->id,
+                // 'id_user' => $user->id_user,
             ]);
         }
 
-        // Jika pengelola RW, update tabel rws agar name_RW = nama user
         if ($this->role === 'pengelola_rw') {
             Rw::where('id_RW', $warga->id_RW)->update([
                 'name_RW' => $warga->name,
-                'id_user' => $user->id,
+                // 'id_user' => $user->id_user,
             ]);
         }
-
 
         // Reset form
         $this->resetForm();
         $this->show = false;
 
-        // Refresh available wargas
+        // Refresh available warga
         $this->mount();
 
-        // Dispatch event untuk refresh halaman utama
+        // Emit dan flash message
         $this->dispatch('user-created');
-
-        // Set flash message
         session()->flash('success', 'User berhasil dibuat dan jabatan warga diubah.');
-
-        // Optional: Refresh component ini juga
         $this->dispatch('$refresh');
     }
 
+
     public function render()
     {
-        // $this->availableWargas = Warga::where('jabatan', 'warga')->get();
-        // dd($warga);
         $this->availableWargas = Warga::where('role', 'warga')
-            ->whereNull('id_user')
             ->where('status_penduduk', 'hidup')
             ->get();
 

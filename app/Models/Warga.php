@@ -19,4 +19,14 @@ class Warga extends Model
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
+
+    public function rt()
+    {
+        return $this->belongsTo(Rt::class, 'id_RT', 'id_RT');
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(Rw::class, 'id_RW', 'id_RW');
+    }
 }

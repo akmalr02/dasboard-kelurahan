@@ -29,12 +29,16 @@ return new class extends Migration
             $table->enum('status_keluarga', ['kepala_keluarga', 'istri', 'anak', 'lainnya'])->default('lainnya');
             $table->enum('status_penduduk', ['hidup', 'pindah', 'meninggal'])->default('hidup');
             $table->date('tanggal_meninggal')->nullable();
+
             $table->unsignedBigInteger('id_RT')->nullable();
             $table->unsignedBigInteger('id_RW')->nullable();
+
             $table->enum('role', ['admin', 'warga', 'ketua_RT', 'ketua_RW'])->default('warga');
-            $table->unsignedBigInteger('id_user')->nullable()->unique();
-            $table->foreign('id_RT')->references('id_RT')->on('rts');
-            $table->foreign('id_RW')->references('id_RW')->on('rws');
+
+            // Foreign keys
+            $table->foreign('id_RT')->references('id_RT')->on('rts')->nullOnDelete();
+            $table->foreign('id_RW')->references('id_RW')->on('rws')->nullOnDelete();
+
             $table->timestamps();
         });
     }

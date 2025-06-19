@@ -16,9 +16,7 @@ return new class extends Migration
             $table->string('name_RT', 225)->nullable();
             $table->integer('no_RT')->nullable();
             $table->unsignedBigInteger('id_RW');
-            $table->unsignedBigInteger('id_user')->unique()->nullable();
             $table->foreign('id_RW')->references('id_RW')->on('rws');
-            $table->foreign('id_user')->references('id_user')->on('users');
             $table->timestamps();
         });
     }

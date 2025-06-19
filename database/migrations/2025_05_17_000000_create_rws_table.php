@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('wargas', function (Blueprint $table) {
-            $table->foreign('id_user')->references('id')->on('users')->nullOnDelete();
+        Schema::create('rws', function (Blueprint $table) {
+            $table->id('id_RW');
+            $table->string('name_RW', 225)->nullable();
+            $table->integer('no_RW')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('wargas', function (Blueprint $table) {
-            $table->dropForeign(['id_user']);
-        });
+        Schema::dropIfExists('rws');
     }
 };

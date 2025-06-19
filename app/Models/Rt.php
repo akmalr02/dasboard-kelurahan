@@ -19,6 +19,9 @@ class Rt extends Model
         'id_user',
     ];
 
+    protected $guarded = ['id_RT'];
+
+
     // Relasi ke RW
     public function rw()
     {
@@ -28,7 +31,7 @@ class Rt extends Model
     // Relasi ke user
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
+        return $this->belongsTo(User::class, 'id_user', 'id');
     }
 
     // Relasi ke warga

@@ -21,17 +21,21 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id_user';
     public $incrementing = false;
-    protected $keyType = 'int';
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'id_user',
         'name',
         'email',
         'password',
         'role',
         'foto_profil',
-        'ttd_digital'
+        'ttd_digital',
+        'id_warga',
+        'id_rt',
+        'id_rw',
     ];
+
+    protected $guarded = ['id_user'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -69,6 +73,16 @@ class User extends Authenticatable
 
     public function warga()
     {
-        return $this->hasOne(Warga::class, 'id_user', 'id_user');
+        return $this->hasOne(Warga::class, 'id_user', 'id');
+    }
+
+    public function rw()
+    {
+        return $this->hasOne(Rw::class, 'id_user', 'id');
+    }
+
+    public function rt()
+    {
+        return $this->hasOne(Rt::class, 'id_user', 'id');
     }
 }

@@ -18,6 +18,9 @@ class Rw extends Model
         'id_user',
     ];
 
+    protected $guarded = ['id_RW'];
+
+
     // Relasi ke user
     public function user()
     {
