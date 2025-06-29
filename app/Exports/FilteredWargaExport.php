@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Warga;
+use App\Models\RT;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -13,8 +14,8 @@ class FilteredWargaExport implements FromCollection, WithHeadings
 
     public function __construct($tipe, $nilai)
     {
-        $this->tipe = $tipe;   // contoh: 'rt' atau 'rw'
-        $this->nilai = $nilai; // contoh: '01'
+        $this->tipe = $tipe;
+        $this->nilai = $nilai;
     }
 
     public function headings(): array
@@ -43,28 +44,55 @@ class FilteredWargaExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        return Warga::select(
-            'NIK',
-            'NKK',
-            'name',
-            'jenis_kelamin',
-            'kewarganegaraan',
-            'agama',
-            'pekerjaan',
-            'alamat',
-            'tempat_lahir',
-            'tanggal_lahir',
-            'golongan_darah',
-            'status_perkawinan',
-            'pendidikan',
-            'status_keluarga',
-            'status_penduduk',
-            'tanggal_meninggal',
-            'id_RT',
-            'id_RW'
-        )
-            ->when($this->tipe === 'rw', fn($q) => $q->where('id_RW', $this->nilai))
-            ->when($this->tipe === 'rt', fn($q) => $q->where('id_RT', $this->nilai))
-            ->get();
+        $query = Warga::with(['rt.rw']);
+
+        // ✅ Tambahkan filter berdasarkan tipe
+        switch ($this->tipe) {
+            case 'rw':
+                $rtIDs = RT::where('id_RW', $this->nilai)->pluck('id_RT');
+                $query->whereIn('id_RT', $rtIDs);
+                break;
+
+            case 'rt':
+                // nilai berupa no_RT, cari id_RT
+                $rt = RT::where('no_RT', $this->nilai)->first();
+                if ($rt) {
+                    $query->where('id_RT', $rt->id_RT);
+                }
+                break;
+
+            case 'rt_with_id':
+                $query->where('id_RT', $this->nilai);
+                break;
+        }
+
+        return $query->orderBy('id_RT')
+            ->orderBy('NKK')
+            ->orderBy('NIK')
+            ->orderBy('name')
+            ->get()
+            // ->filter(fn($w) => $w->rt && $w->rw)
+            ->map(function ($warga) {
+                return [
+                    $warga->NIK,
+                    $warga->NKK,
+                    $warga->name,
+                    $warga->jenis_kelamin,
+                    $warga->kewarganegaraan,
+                    $warga->agama,
+                    $warga->pekerjaan,
+                    $warga->alamat,
+                    $warga->tempat_lahir,
+                    $warga->tanggal_lahir,
+                    $warga->golongan_darah,
+                    $warga->status_perkawinan,
+                    $warga->pendidikan,
+                    $warga->status_keluarga,
+                    $warga->status_penduduk,
+                    $warga->tanggal_meninggal,
+                    optional($warga->rt)->no_RT ?? 'N/A',
+                    optional($warga->rt->rw)->no_RW ?? 'N/A',
+                ];
+            });
     }
 }

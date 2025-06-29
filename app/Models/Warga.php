@@ -20,6 +20,11 @@ class Warga extends Model
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
+    public function warga()
+    {
+        return $this->hasOne(Warga::class, 'id_user', 'id_user');
+    }
+
     public function rt()
     {
         return $this->belongsTo(Rt::class, 'id_RT', 'id_RT');

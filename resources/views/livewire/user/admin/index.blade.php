@@ -36,12 +36,13 @@
                                 <span>Data Warga per RT</span>
                             </label>
                         </div>
+
                         <!-- Dropdown RT/RW -->
                         <div class="flex gap-4 mb-4"
                             x-show="selectedData === 'warga_rw' || selectedData === 'warga_rt'">
                             <div>
                                 <label class="text-sm font-medium text-gray-700">Pilih RW</label>
-                                <select wire:model="selectedRW" class="border-gray-300 rounded">
+                                <select wire:model.live="selectedRW" class="border-gray-300 rounded w-full">
                                     <option value="">-- Pilih RW --</option>
                                     @foreach (\App\Models\RW::all() as $rw)
                                         <option value="{{ $rw->id_RW }}">{{ $rw->id_RW }}</option>
@@ -49,14 +50,20 @@
                                 </select>
                             </div>
 
-                            <div x-show="selectedData === 'warga_rt'">
+                            <div x-show="selectedData === 'warga_rt'" class="w-full">
                                 <label class="text-sm font-medium text-gray-700">Pilih RT</label>
-                                <select wire:model="selectedRT" class="border-gray-300 rounded">
+                                <select wire:model="selectedRT" class="border-gray-300 rounded w-full"
+                                    :disabled="!$wire.selectedRW">
                                     <option value="">-- Pilih RT --</option>
-                                    @foreach (\App\Models\RT::when($selectedRW, fn($q) => $q->where('id_RW', $selectedRW))->get() as $rt)
-                                        <option value="{{ $rt->id_RT }}">{{ $rt->id_RT }}</option>
-                                    @endforeach
+                                    @if ($selectedRW)
+                                        @foreach (\App\Models\RT::where('id_RW', $selectedRW)->get() as $rt)
+                                            <option value="{{ $rt->no_RT }}">RT {{ $rt->no_RT }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
+                                <div x-show="!$wire.selectedRW">
+                                    <p class="text-xs text-gray-500 mt-1">Pilih RW terlebih dahulu</p>
+                                </div>
                             </div>
                         </div>
 
@@ -66,7 +73,8 @@
                                 class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Batal</button>
                             <button @click="if(selectedData){ open = false; $wire.downloadData(selectedData) }"
                                 class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                                :disabled="!selectedData">
+                                :disabled="!selectedData || (selectedData === 'warga_rt' && (!$wire.selectedRW || !$wire
+                                    .selectedRT))">
                                 Pilih
                             </button>
                         </div>

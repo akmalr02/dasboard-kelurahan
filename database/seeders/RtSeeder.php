@@ -9,15 +9,19 @@ class RtSeeder extends Seeder
 {
     public function run(): void
     {
-        $rwCount = 8;
-        $rtPerRw = 4;
+        // Kosongkan dulu tabel rts
+        DB::table('rts')->delete();
 
-        $id = 1;
-        for ($rw = 1; $rw <= $rwCount; $rw++) {
-            for ($rt = 1; $rt <= $rtPerRw; $rt++) {
+        $totalRW = 8;
+
+        for ($rwId = 1; $rwId <= $totalRW; $rwId++) {
+            // Acak antara 7 atau 8 RT untuk RW ini
+            $jumlahRT = rand(7, 8);
+
+            for ($rt = 1; $rt <= $jumlahRT; $rt++) {
                 DB::table('rts')->insert([
                     'no_RT' => str_pad($rt, 2, '0', STR_PAD_LEFT),
-                    'id_RW' => $rw,
+                    'id_RW' => $rwId,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

@@ -4,41 +4,42 @@ namespace App\Livewire\User\RW;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Models\Warga;
-use Illuminate\Support\Facades\DB;
-
-use function Laravel\Prompts\error;
 
 class IndexController extends Component
 {
     protected string $layout = 'layouts.app';
+    public $showModal = false;
+    public $selectedWarga = null;
 
-    public function mount() {}
+    public function showDetail($id)
+    {
+        $this->selectedWarga = Warga::findOrFail($id);
+        $this->showModal = true;
+    }
 
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->selectedWarga = null;
+    }
 
     public function render()
     {
-        // $user = Auth::user();
+        $user = Auth::user();
 
-        // $rw = $user->rw;
+        $data = collect();
 
-        // if (!$rw) {
-        //     abort(403, 'Anda tidak terdaftar sebagai pengelola RW.');
-        // }
+        if ($user->warga && $user->warga->NKK) {
+            $data = Warga::where('NKK', $user->warga->NKK)
+                ->where('status_penduduk', 'hidup')
+                ->get();
+        }
 
-        // $wargas = DB::table('wargas')
-        //     ->where('wargas.id_RW', $rw->id_RW)
-        //     ->where('wargas.status_penduduk', 'hidup')
-        //     ->orderBy('wargas.id_RT')
-        //     ->get()
-        //     ->groupBy('id_RT');
-
-        // dd($wargas);
-
+        // dd($data);
         return view('livewire.user.r-w.index', [
-            'title' => 'RW Dashboard',
-            // 'wargasPerRt' => $wargas
+            'title' => 'Data Keluarga',
+            'keluarga' => $data
         ]);
     }
 }

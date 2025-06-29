@@ -73,16 +73,16 @@ class User extends Authenticatable
 
     public function warga()
     {
-        return $this->hasOne(Warga::class, 'id_user', 'id');
+        return $this->belongsTo(Warga::class, 'id_warga', 'id_warga');
     }
 
     public function rw()
     {
-        return $this->hasOne(Rw::class, 'id_user', 'id');
+        return $this->hasOne(Rw::class, 'id_user', 'id_user');
     }
 
     public function rt()
     {
-        return $this->hasOne(Rt::class, 'id_user', 'id');
+        return $this->hasOne(Rt::class, 'id_user', 'id_user');
     }
 }

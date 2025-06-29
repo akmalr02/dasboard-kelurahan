@@ -15,11 +15,17 @@ class DataUserController extends Component
     protected $paginationTheme = 'tailwind';
 
     public $search = '';
-    protected $listeners = ['user-created' => 'refreshUsers'];
+    protected $listeners = ['showSuccessMessage' => 'showSuccessMessage'];
+    public $successMessage = '';
+
+
+    public function showSuccessMessage($message)
+    {
+        $this->successMessage = $message;
+    }
 
     public function refreshUsers()
     {
-        // Bisa langsung reset halaman agar data baru muncul
         $this->resetPage();
         $this->dispatch('$refresh');
     }
@@ -34,6 +40,7 @@ class DataUserController extends Component
         $this->search = '';
         $this->resetPage();
     }
+
     public function render()
     {
         $query = User::query();

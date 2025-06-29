@@ -1,4 +1,4 @@
-@if (session()->has('success'))
+{{-- @if (session()->has('success'))
     <div class="mb-4 rounded-lg bg-green-100 text-green-800 px-4 py-2 text-sm">
         {{ session('success') }}
     </div>
@@ -8,7 +8,7 @@
     <div class="mb-4 rounded-lg bg-red-100 text-red-800 px-4 py-2 text-sm">
         {{ session('error') }}
     </div>
-@endif
+@endif --}}
 
 <div x-data="{ open: @entangle('show'), showPassword: false }">
     <button @click="open = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
@@ -43,8 +43,8 @@
                             <option value="">-- Pilih Warga --</option>
                             @foreach ($availableWargas as $warga)
                                 <option value="{{ $warga->id_warga }}">{{ $warga->name }} (NIK: {{ $warga->NKK }})
-                                    (Rw:{{ $warga->id_RW }})
-                                    (RT:{{ $warga->id_RT }})
+                                    (RW: {{ $warga->rt->rw->no_RW ?? 'N/A' }})
+                                    (RT: {{ $warga->rt->no_RT ?? 'N/A' }})
                                 </option>
                             @endforeach
                         </select>

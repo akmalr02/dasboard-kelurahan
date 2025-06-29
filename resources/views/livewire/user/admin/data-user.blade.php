@@ -1,7 +1,7 @@
 <div>
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3">
-        <div class="max-w-7xl mx-auto px-2">
-            <h1 class="text-3xl font-bold mb-2">User list</h1>
+        <div class="max-w-7xl mx-auto px-6">
+            <h1 class="text-3xl font-bold mb-2">User List</h1>
         </div>
     </div>
     <div class="p-6">
@@ -9,7 +9,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
 
             <div wire:key="create-user-section" wire:ignore.self>
-                <livewire:user.admin.create-user-controller wire:key="create-user-{{ now()->timestamp }}" />
+                <livewire:user.admin.create-user-controller wire:key="create-user" />
             </div>
             <div class="flex items-center space-x-2">
                 <div class="relative">
@@ -64,70 +64,101 @@
             </div>
         @endif
 
+        @if ($successMessage)
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
+                class="mb-4 bg-green-100 text-green-800 px-4 py-2 rounded-lg text-sm transition-all duration-500">
+                {{ $successMessage }}
+            </div>
+        @endif
+
         <!-- Table -->
-        <div class="overflow-x-auto shadow-lg border border-gray-200 rounded-lg p-2">
+        <div class="overflow-x-auto shadow-lg border border-gray-200 rounded-lg">
             <table class="min-w-full bg-white">
                 <thead>
-                    <tr class="bg-blue-100 text-left text-gray-700 font-semibold">
-                        <th class="px-4 py-4 border-b">No</th>
-                        <th class="px-4 py-4 border-b">Nama</th>
-                        <th class="px-4 py-4 border-b">E-mail</th>
-                        <th class="px-4 py-4 border-b">Peran</th>
+                    <tr class="bg-blue-100 text-gray-700 font-semibold">
+                        <th class="px-6 py-4 border-b text-center w-16">No</th>
+                        <th class="px-6 py-4 border-b text-left min-w-[200px]">Nama</th>
+                        <th class="px-6 py-4 border-b text-left min-w-[250px]">E-mail</th>
+                        <th class="px-6 py-4 border-b text-center min-w-[120px]">Role</th>
+                        <th class="px-6 py-4 border-b text-center w-20">RW</th>
+                        <th class="px-6 py-4 border-b text-center w-20">RT</th>
+                        <th class="px-6 py-4 border-b text-center min-w-[200px]">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @forelse ($user as $index => $q)
                         <tr class="hover:bg-gray-50 transition-colors duration-150">
-                            <td class="px-4 py-3 border-b">
+                            <td class="px-6 py-4 text-center text-sm text-gray-900">
                                 {{ $loop->iteration + ($user->currentPage() - 1) * $user->perPage() }}
                             </td>
-                            <td class="px-4 py-3 border-b">{{ $q->name }}</td>
-                            <td class="px-4 py-3 border-b">{{ $q->email }}</td>
-                            <td class="px-4 py-3 border-b">{{ $q->role }}</td>
+                            <td class="px-6 py-4 text-left">
+                                <div class="text-sm font-medium text-gray-900">{{ $q->name }}</div>
+                            </td>
+                            <td class="px-6 py-4 text-left">
+                                <div class="text-sm text-gray-600">{{ $q->email }}</div>
+                            </td>
+                            <td class="px-6 py-4 text-center">{{ $q->role }}</td>
+                            <td class="px-6 py-4 text-center text-sm text-gray-900">
+                                {{ $q->id_rw ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 text-center text-sm text-gray-900">
+                                {{ $q->id_rt ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex justify-center items-center gap-2">
+                                    <!-- Tombol Detail -->
+                                    <button wire:click="$dispatch('showUserDetail', { id_user: '{{ $q->id_user }}' })"
+                                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md transition-colors duration-200 flex items-center gap-1">
+                                        Detail
+                                    </button>
+                                    <button wire:click="$dispatch('editUser', { id_user: '{{ $q->id_user }}' })"
+                                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md transition-colors duration-200 flex items-center gap-1">
+                                        Edit
+                                    </button>
+                                    <button
+                                        wire:click="$dispatch('confirmDeleteUser', { id_user: '{{ $q->id_user }}' })"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-colors duration-200 flex items-center gap-1">
+                                        Hapus
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-4 py-8 border-b text-center text-gray-500">
-                                @if ($search)
-                                    <div class="flex flex-col items-center">
-                                        <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                        </svg>
-
-                                        <p class="text-lg font-medium text-gray-900 mb-2">Tidak ada data ditemukan</p>
-                                        <p class="text-gray-500">Coba ubah kata kunci pencarian Anda</p>
-                                        <button wire:click="clearSearch"
-                                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-150">
-                                            Hapus Pencarian
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="flex flex-col items-center">
-                                        <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                                            </path>
-                                        </svg>
-                                        <p class="text-lg font-medium text-gray-900 mb-2">Belum ada data user</p>
-                                        <p class="text-gray-500">Data user akan ditampilkan di sini</p>
-                                    </div>
-                                @endif
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                                        </path>
+                                    </svg>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data</h3>
+                                    <p class="text-gray-500">Belum ada user yang terdaftar dalam sistem</p>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+            <div wire:key="detail-user-section">
+                <livewire:user.admin.detail-user-controller />
+            </div>
+            <div wire:key="edit-user-section">
+                <livewire:user.admin.edit-user-controller />
+            </div>
+            <div wire:key="delet-user-section">
+                <livewire:user.admin.delet-user-controller />
+            </div>
         </div>
 
         <!-- Pagination -->
         @if ($user->hasPages())
-            <div class="mt-6 flex justify-between items-center">
-                <div class="text-lg text-gray-700">
-                    Menampilkan {{ $user->firstItem() }} sampai {{ $user->lastItem() }}
-                    dari {{ $user->total() }} data
+            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-gray-700">
+                    Menampilkan <span class="font-medium">{{ $user->firstItem() }}</span>
+                    sampai <span class="font-medium">{{ $user->lastItem() }}</span>
+                    dari <span class="font-medium">{{ $user->total() }}</span> data
                 </div>
                 <div>
                     {{ $user->onEachSide(1)->links('vendor.pagination.tailwind') }}

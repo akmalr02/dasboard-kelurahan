@@ -5,6 +5,8 @@ namespace App\Livewire\User\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Warga;
+use App\Models\RW;
+use App\Models\RT;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\WargaExport;
 use App\Exports\FilteredWargaExport;
@@ -24,17 +26,46 @@ class IndexController extends Component
 
     public function downloadData($tipe)
     {
+        // dd([
+        //     'tipe' => $tipe,
+        //     'selectedRW' => $this->selectedRW,
+        //     'selectedRT' => $this->selectedRT,
+        // ]);
         if ($tipe === 'semua') {
-            return Excel::download(new WargaExport, 'data-warga-semua.xlsx');
+            return Excel::download(new WargaExport, 'seluruh data warga.xlsx');
         }
 
-        if ($tipe === 'warga_rw') {
-            return Excel::download(new FilteredWargaExport('rw', $this->selectedRW), "data-warga-rw-{$this->selectedRW}.xlsx");
+        if ($tipe === 'warga_rw' && $this->selectedRW) {
+            return Excel::download(
+                new FilteredWargaExport('rw', $this->selectedRW),
+                "data-warga-rw-{$this->selectedRW}.xlsx"
+            );
         }
 
-        if ($tipe === 'warga_rt') {
-            return Excel::download(new FilteredWargaExport('rt', $this->selectedRT), "data-warga-rt-{$this->selectedRT}.xlsx");
+        if ($tipe === 'warga_rt' && $this->selectedRT) {
+            // Debug data RT
+            $rtData = RT::where('no_RT', $this->selectedRT)->first();
+
+            if ($this->selectedRW) {
+                // Cari RT berdasarkan no_RT dan RW
+                $rt = RT::where('no_RT', $this->selectedRT)
+                    ->where('id_RW', $this->selectedRW)
+                    ->first();
+
+                if ($rt) {
+                    return Excel::download(
+                        new FilteredWargaExport('rt_with_id', $rt->id_RT),
+                        "data-warga-rw-{$this->selectedRW}-rt-{$this->selectedRT}.xlsx"
+                    );
+                }
+            }
+
+            return Excel::download(
+                new FilteredWargaExport('rt', $this->selectedRT),
+                "data-warga-rt-{$this->selectedRT}.xlsx"
+            );
         }
+
         session()->flash('error', 'Harap pilih RT atau RW terlebih dahulu.');
     }
 

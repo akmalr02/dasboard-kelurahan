@@ -25,6 +25,9 @@ class AuthController extends Component
         'email.email' => 'Format email tidak valid.',
         'password.required' => 'Password wajib diisi.',
         'password.min' => 'Password minimal 6 karakter.',
+        'email.not_regex' => 'Input email mengandung tag yang tidak diizinkan.',
+        'password.not_regex' => 'Input password mengandung tag yang tidak diizinkan.',
+
     ];
 
     public function render()
@@ -41,6 +44,10 @@ class AuthController extends Component
         // dd($this->email, $this->password, $this->remember);
 
         $this->validate();
+
+        $this->email = strip_tags($this->email);
+        $this->password = strip_tags($this->password);
+
 
         $credentials = [
             'email' => $this->email,

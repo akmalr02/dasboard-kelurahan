@@ -293,12 +293,12 @@ class IndexController extends Component
             ->groupBy('status_perkawinan')
             ->orderBy('status_perkawinan');
 
-        // Tambahkan filter RT jika tersedia
+        //Filter RT 
         if ($this->id_RT) {
             $query->where('id_RT', $this->id_RT);
         }
 
-        // Tambahkan filter RW jika tersedia
+        //Filter RW 
         if ($this->id_RW) {
             $query->where('id_RW', $this->id_RW);
         }

@@ -88,7 +88,10 @@
                         Ingat saya
                     </label>
                 </div>
-
+                <div class="flex item-center nt-2">
+                    <h1 class="ml-2 block text-sm text-gray-900">Belum punya akun? <a href="{{ route('register') }} "
+                            class="text-black hover:text-blue-600">klik di sini</a></h1>
+                </div>
                 <!-- Tombol Login -->
                 <div>
                     <button type="submit"
