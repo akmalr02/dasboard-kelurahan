@@ -99,10 +99,10 @@
                             </td>
                             <td class="px-6 py-4 text-center">{{ $q->role }}</td>
                             <td class="px-6 py-4 text-center text-sm text-gray-900">
-                                {{ $q->id_rw ?? '-' }}
+                                {{ optional($q->rw)->no_RW ?? '-' }}
                             </td>
                             <td class="px-6 py-4 text-center text-sm text-gray-900">
-                                {{ $q->id_rt ?? '-' }}
+                                {{ optional($q->rt)->no_RT ?? '-' }}
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex justify-center items-center gap-2">
@@ -141,13 +141,13 @@
                     @endforelse
                 </tbody>
             </table>
-            <div wire:key="detail-user-section">
+            <div wire:key="detail-user-section" wire:ignore.self>
                 <livewire:user.admin.detail-user-controller />
             </div>
-            <div wire:key="edit-user-section">
+            <div wire:key="edit-user-section" wire:ignore.self>
                 <livewire:user.admin.edit-user-controller />
             </div>
-            <div wire:key="delet-user-section">
+            <div wire:key="delet-user-section" wire:ignore.self>
                 <livewire:user.admin.delet-user-controller />
             </div>
         </div>

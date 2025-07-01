@@ -18,14 +18,26 @@ class EditUserController extends Component
 
     public function editUser($id_user)
     {
-        $this->user = User::find($id_user);
+        // Optimasi: Set userId dulu, baru load data ketika modal sudah terbuka
+        $this->userId = $id_user;
+        $this->show = true;
 
-        if ($this->user) {
-            $this->userId = $this->user->id_user;
-            $this->name = $this->user->name;
-            $this->email = $this->user->email;
-            $this->role = $this->user->role;
-            $this->show = true;
+        // Defer data loading menggunakan dispatch
+        $this->dispatch('loadUserData');
+    }
+
+    public function loadUserData()
+    {
+        if ($this->userId) {
+            // Optimasi: Gunakan select untuk ambil kolom yang diperlukan saja
+            $this->user = User::select('id_user', 'name', 'email', 'role')
+                ->find($this->userId);
+
+            if ($this->user) {
+                $this->name = $this->user->name;
+                $this->email = $this->user->email;
+                $this->role = $this->user->role;
+            }
         }
     }
 
@@ -42,15 +54,13 @@ class EditUserController extends Component
             'role' => 'required|in:admin,pengelola_rw,pengelola_rt,warga',
         ]);
 
-        $user = User::find($this->userId);
+        // Optimasi: Langsung update tanpa find lagi
+        User::where('id_user', $this->userId)->update([
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
+        ]);
 
-        if ($user) {
-            $user->update([
-                'name' => $this->name,
-                'email' => $this->email,
-                'role' => $this->role,
-            ]);
-        }
         $this->dispatch('showSuccessMessage', 'Data user berhasil diperbarui!');
         $this->closeModal();
     }

@@ -78,7 +78,7 @@ class DataWargaController extends Component
             });
 
         return view('livewire.user.r-w.data-warga', [
-            'title' => 'RW Dashboard',
+            'title' => 'Data warga RW',
             'wargas' => $query
                 ->orderBy('id_RW')
                 ->orderBy('id_RT')

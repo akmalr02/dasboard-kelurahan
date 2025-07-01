@@ -162,8 +162,9 @@
                             <div class="flex -space-x-2 overflow-hidden">
                                 <img class="inline-block size-8 rounded-full ring-2 ring-white"
                                     src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) : asset('img/user.jpg') }}"
-                                    alt="" />
+                                    alt="Foto Profil" />
                             </div>
+
                             <span class="font-semibold text-base">
                                 {{ Auth::user()->name }}</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +175,7 @@
                         <div x-show="openUser" @click.outside="openUser = false" x-transition
                             class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
 
-                            <a href="{{ route('setting') }}"
+                            <a href="{{ route('setting') }}" wire:navigate
                                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <x-simpleline-user class="w-5 h-5" />
                                 Akun Saya

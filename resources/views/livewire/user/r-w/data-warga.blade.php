@@ -2,13 +2,12 @@
     <!-- Header Section -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3">
         <div class="max-w-7xl mx-auto px-6">
-            <h1 class="text-3xl font-bold mb-2">Dashboard Ketua RW</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ $title }}</h1>
         </div>
     </div>
     <div class="p-6">
         <!-- Search Bar -->
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
-            <h2 class="text-xl font-semibold text-gray-800">Data Warga</h2>
 
             <div x-data="{ open: false, selectedData: null }">
                 <button @click="open = true"

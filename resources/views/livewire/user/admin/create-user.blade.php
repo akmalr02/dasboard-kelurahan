@@ -1,15 +1,3 @@
-{{-- @if (session()->has('success'))
-    <div class="mb-4 rounded-lg bg-green-100 text-green-800 px-4 py-2 text-sm">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if (session()->has('error'))
-    <div class="mb-4 rounded-lg bg-red-100 text-red-800 px-4 py-2 text-sm">
-        {{ session('error') }}
-    </div>
-@endif --}}
-
 <div x-data="{ open: @entangle('show'), showPassword: false }">
     <button @click="open = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
         Tambah User

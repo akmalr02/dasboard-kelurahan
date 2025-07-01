@@ -9,31 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class SettingController extends Component
 {
-    protected string $layout = 'layouts.app';
-
-    public $selectedWarga = null;
-
-
-    public function data($id)
-    {
-        $this->selectedWarga = Warga::findOrFail($id);
-    }
-
     public function render()
     {
         $user = Auth::user();
+        $warga = $user?->warga;
 
-        $data = $user?->wargas;
-
-        if ($user) {
-            $data = $user->warga;
-        }
-
-        // dd($data);
         return view('livewire.user.setting', [
-            'title' => 'akun saya',
+            'title' => 'Pengaturan Akun',
             'user' => $user,
-            'warga' => $data,
+            'warga' => $warga,
         ]);
     }
 }

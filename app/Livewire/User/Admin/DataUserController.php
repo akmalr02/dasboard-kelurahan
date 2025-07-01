@@ -54,13 +54,25 @@ class DataUserController extends Component
             });
         }
         // $user = $query->orderBy('role')->orderBy('name')->get();
-        // dd($user->pluck('role')->unique());
+        // dd($query->with(['rw', 'rt'])->get()->map(function ($user) {
+        //     return [
+        //         'id_user' => $user->id_user,
+        //         'name' => $user->name,
+        //         'role' => $user->role,
+        //         'no_RT' => optional($user->rt)->no_RT,
+        //         'no_RW' => optional($user->rw)->no_RW,
+        //     ];
+        // }));
+        $users = $query
+            ->with(['rw:id_RW,no_RW', 'rt:id_RT,no_RT']) // penting: hanya kolom yang dibutuhkan
+            ->orderByRaw("FIELD(role, 'admin', 'pengelola_rw', 'pengelola_rt', 'warga')")
+            ->orderBy('name')
+            ->paginate(20);
+
 
         return view('livewire.user.admin.data-user', [
             'title' => 'List user',
-            'user' => $query->orderByRaw("FIELD(role, 'admin', 'pengelola_rw', 'pengelola_rt', 'warga')")
-                ->orderBy('name')
-                ->paginate(20),
+            'user' => $users,
         ]);
     }
 }

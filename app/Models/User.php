@@ -78,11 +78,11 @@ class User extends Authenticatable
 
     public function rw()
     {
-        return $this->hasOne(Rw::class, 'id_user', 'id_user');
+        return $this->belongsTo(Rw::class, 'id_rw', 'id_RW');
     }
 
     public function rt()
     {
-        return $this->hasOne(Rt::class, 'id_user', 'id_user');
+        return $this->belongsTo(Rt::class, 'id_rt', 'id_RT');
     }
 }

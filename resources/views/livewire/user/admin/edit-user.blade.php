@@ -1,15 +1,3 @@
-{{-- @if (session()->has('success'))
-    <div class="mb-4 rounded-lg bg-green-100 text-green-800 px-4 py-2 text-sm">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if (session()->has('error'))
-    <div class="mb-4 rounded-lg bg-red-100 text-red-800 px-4 py-2 text-sm">
-        {{ session('error') }}
-    </div>
-@endif --}}
-
 <div x-data="{ open: @entangle('show') }">
     <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
         <div @click.outside="open = false; $wire.closeModal()" class="bg-white rounded-xl shadow-lg max-w-lg w-full p-6">

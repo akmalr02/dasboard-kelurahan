@@ -1,10 +1,11 @@
 <div class="space-y-10">
+
     <!-- Foto Profil -->
     <div>
         <h2 class="text-lg font-semibold">Foto Profil</h2>
         @if ($user->foto_profil)
-        <img src="{{ asset('storage/' . $user->foto_profil) }}" class="w-24 h-24 rounded-lg object-cover">
-        <button wire:click="hapusFotoProfil" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Hapus</button>
+            <img src="{{ asset('storage/' . $user->foto_profil) }}" class="w-24 h-24 rounded-lg object-cover">
+            <button wire:click="hapusFotoProfil" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Hapus</button>
         @endif
         <button wire:click="$set('showFotoModal', true)" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded">Upload
             Baru</button>
@@ -16,7 +17,7 @@
             <h3 class="text-lg font-bold mb-2">Upload Foto</h3>
             <input type="file" wire:model="foto_profil" class="mb-2">
             @error('foto_profil')
-            <span class="text-red-500">{{ $message }}</span>
+                <span class="text-red-500">{{ $message }}</span>
             @enderror
             <div class="flex justify-end gap-2">
                 <button type="button" wire:click="$set('showFotoModal', false)"
@@ -30,8 +31,8 @@
     <div>
         <h2 class="text-lg font-semibold">Tanda Tangan Digital</h2>
         @if ($user->ttd_digital)
-        <img src="{{ asset('storage/' . $user->ttd_digital) }}" class="w-32 h-16 object-contain rounded">
-        <button wire:click="hapusTandaTangan" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Hapus</button>
+            <img src="{{ asset('storage/' . $user->ttd_digital) }}" class="w-32 h-16 object-contain rounded">
+            <button wire:click="hapusTandaTangan" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Hapus</button>
         @endif
         <button wire:click="$set('showTtdModal', true)" class="mt-2 px-4 py-2 bg-purple-600 text-white rounded">Upload
             Baru</button>
@@ -43,7 +44,7 @@
             <h3 class="text-lg font-bold mb-2">Upload Tanda Tangan</h3>
             <input type="file" wire:model="ttd_digital" class="mb-2">
             @error('ttd_digital')
-            <span class="text-red-500">{{ $message }}</span>
+                <span class="text-red-500">{{ $message }}</span>
             @enderror
             <div class="flex justify-end gap-2">
                 <button type="button" wire:click="$set('showTtdModal', false)"
@@ -68,7 +69,7 @@
             <input type="password" wire:model="new_password_confirmation" placeholder="Konfirmasi Password"
                 class="mb-2 w-full">
             @error('new_password')
-            <span class="text-red-500">{{ $message }}</span>
+                <span class="text-red-500">{{ $message }}</span>
             @enderror
             <div class="flex justify-end gap-2">
                 <button type="button" wire:click="$set('showPasswordModal', false)"
@@ -77,81 +78,5 @@
             </div>
         </form>
     </x-modal>
+
 </div>
-
-<?php
-
-namespace App\Livewire\User;
-
-use App\Models\User;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-
-class UserSettingForm extends Component
-{
-    use WithFileUploads;
-
-    public User $user;
-    public $foto_profil, $ttd_digital;
-    public $new_password, $new_password_confirmation;
-
-    public $showFotoModal = false;
-    public $showTtdModal = false;
-    public $showPasswordModal = false;
-
-    public function mount()
-    {
-        $this->user = Auth::user();
-    }
-
-    public function uploadFotoProfil()
-    {
-        $this->validate(['foto_profil' => 'required|image|max:2048']);
-        $path = $this->foto_profil->store('foto_profil', 'public');
-        $this->user->update(['foto_profil' => $path]);
-        $this->reset(['foto_profil', 'showFotoModal']);
-        session()->flash('success', 'Foto profil berhasil diunggah.');
-    }
-
-    public function uploadTandaTangan()
-    {
-        $this->validate(['ttd_digital' => 'required|image|max:1024']);
-        $path = $this->ttd_digital->store('ttd_digital', 'public');
-        $this->user->update(['ttd_digital' => $path]);
-        $this->reset(['ttd_digital', 'showTtdModal']);
-        session()->flash('success', 'Tanda tangan berhasil diunggah.');
-    }
-
-    public function gantiPassword()
-    {
-        $this->validate([
-            'new_password' => 'required|min:6|confirmed',
-        ]);
-        $this->user->update(['password' => Hash::make($this->new_password)]);
-        $this->reset(['new_password', 'new_password_confirmation', 'showPasswordModal']);
-        session()->flash('success', 'Password berhasil diperbarui.');
-    }
-
-    public function hapusFotoProfil()
-    {
-        $this->user->update(['foto_profil' => null]);
-        session()->flash('success', 'Foto profil berhasil dihapus.');
-    }
-
-    public function hapusTandaTangan()
-    {
-        $this->user->update(['ttd_digital' => null]);
-        session()->flash('success', 'Tanda tangan berhasil dihapus.');
-    }
-
-    public function render()
-    {
-        return view('livewire.user.setting.user-setting-form');
-    }
-}
-
-<div class="max-w-6xl mx-auto py-12 px-4">
-                                    @livewire('user.setting.user-setting-form')
-                                </div>

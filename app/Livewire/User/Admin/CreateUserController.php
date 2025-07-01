@@ -13,7 +13,6 @@ class CreateUserController extends Component
 {
     public $email, $password, $selectedWarga, $role;
     public bool $show = false;
-
     public $availableWargas = [];
 
     protected function rules()
@@ -28,19 +27,34 @@ class CreateUserController extends Component
 
     public function mount()
     {
-        // Ambil hanya warga yang belum punya user dan jabatannya masih warga
-        $this->availableWargas = Warga::where('role', 'warga')
+        $this->loadAvailableWargas();
+    }
+
+    public function loadAvailableWargas()
+    {
+        // Optimasi: Ambil kolom yang diperlukan saja
+        $this->availableWargas = Warga::select('id_warga', 'name', 'id_RT', 'id_RW')
+            ->where('role', 'warga')
             ->where('status_penduduk', 'hidup')
             ->get();
     }
 
     public function resetForm()
     {
-        $this->email = '';
-        $this->password = '';
-        $this->selectedWarga = '';
-        $this->role = '';
+        $this->reset(['email', 'password', 'selectedWarga', 'role']);
         $this->resetValidation();
+    }
+
+    public function openModal()
+    {
+        $this->show = true;
+        $this->resetForm();
+    }
+
+    public function closeModal()
+    {
+        $this->show = false;
+        $this->resetForm();
     }
 
     public function create()
@@ -61,7 +75,7 @@ class CreateUserController extends Component
                 ->exists();
 
             if ($sudahAda) {
-                session()->flash('error', 'RT ini sudah memiliki pengelola.');
+                $this->addError('role', 'RT ini sudah memiliki pengelola.');
                 return;
             }
         } elseif ($this->role === 'pengelola_rw') {
@@ -70,64 +84,60 @@ class CreateUserController extends Component
                 ->exists();
 
             if ($sudahAda) {
-                session()->flash('error', 'RW ini sudah memiliki pengelola.');
+                $this->addError('role', 'RW ini sudah memiliki pengelola.');
                 return;
             }
         }
 
-        // Buat user dengan id_user = id_warga
-        $user = User::create([
-            'name' => $warga->name,
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
-            'role' => $this->role,
-            'id_warga' => $warga->id_warga,
-            'id_rt' => $warga->id_RT,
-            'id_rw' => $warga->id_RW,
-        ]);
-
-        // dd($user);
-
-        // Update role warga
-        $warga->update([
-            'role' => $this->role === 'pengelola_rt' ? 'ketua_RT' : 'ketua_RW',
-        ]);
-
-        // Update tabel RT atau RW untuk set name dan id_user
-        if ($this->role === 'pengelola_rt') {
-            Rt::where('id_RT', $warga->id_RT)->update([
-                'name_RT' => $warga->name,
-                // 'id_user' => $user->id_user,
+        try {
+            // Buat user dengan id_user = id_warga
+            $user = User::create([
+                'name' => $warga->name,
+                'email' => $this->email,
+                'password' => Hash::make($this->password),
+                'role' => $this->role,
+                'id_warga' => $warga->id_warga,
+                'id_rt' => $warga->id_RT,
+                'id_rw' => $warga->id_RW,
             ]);
-        }
 
-        if ($this->role === 'pengelola_rw') {
-            Rw::where('id_RW', $warga->id_RW)->update([
-                'name_RW' => $warga->name,
-                // 'id_user' => $user->id_user,
+            // Update role warga
+            $warga->update([
+                'role' => $this->role === 'pengelola_rt' ? 'ketua_RT' : 'ketua_RW',
             ]);
+
+            // Update tabel RT atau RW untuk set name
+            if ($this->role === 'pengelola_rt') {
+                Rt::where('id_RT', $warga->id_RT)->update([
+                    'name_RT' => $warga->name,
+                ]);
+            }
+
+            if ($this->role === 'pengelola_rw') {
+                Rw::where('id_RW', $warga->id_RW)->update([
+                    'name_RW' => $warga->name,
+                ]);
+            }
+
+            // Tutup modal dan reset form
+            $this->closeModal();
+
+            // Refresh available warga
+            $this->loadAvailableWargas();
+
+            // KONSISTEN: Gunakan dispatch yang sama seperti controller lain
+            $this->dispatch('showSuccessMessage', 'User berhasil dibuat dan jabatan warga berhasil diperbarui!');
+
+            // Refresh parent component untuk update tabel
+            $this->dispatch('$refresh');
+        } catch (\Exception $e) {
+            // Handle error
+            $this->addError('general', 'Terjadi kesalahan saat membuat user. Silakan coba lagi.');
         }
-
-        // Reset form
-        $this->resetForm();
-        $this->show = false;
-
-        // Refresh available warga
-        $this->mount();
-
-        // Emit dan flash message
-        $this->dispatch('user-created');
-        session()->flash('success', 'User berhasil dibuat dan jabatan warga diubah.');
-        $this->dispatch('$refresh');
     }
-
 
     public function render()
     {
-        $this->availableWargas = Warga::where('role', 'warga')
-            ->where('status_penduduk', 'hidup')
-            ->get();
-
         return view('livewire.user.admin.create-user');
     }
 }
