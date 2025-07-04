@@ -6,6 +6,19 @@ Chart.register(ChartDataLabels);
 window.chartData = null;
 window.chartInstances = {};
 
+// Debounce function untuk menghindari multiple rapid calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 function destroyChart(chartId) {
     if (window.chartInstances[chartId]) {
         window.chartInstances[chartId].destroy();
@@ -20,333 +33,390 @@ function destroyAllCharts() {
     });
 }
 
+// Optimized chart rendering dengan async
+async function renderChartsAsync() {
+    if (!window.chartData) return;
+
+    // Render charts yang terlihat di viewport dulu
+    const visibleCharts = [
+        { func: renderchartWargaWNA, id: "chartWargaWNA" },
+        { func: renderchartWargaWNI, id: "chartWargaWNI" },
+        { func: renderTotalWarga, id: "chartTotalWarga" },
+    ];
+
+    const backgroundCharts = [
+        { func: renderChartKelahiran, id: "chartKelahiran" },
+        { func: renderChartKematian, id: "chartKematian" },
+        { func: renderChartGenerasi, id: "chartGenerasi" },
+        { func: renderChartPerkawinan, id: "chartPerkawinan" },
+        { func: renderChartAgama, id: "chartAgama" },
+        { func: renderChartPendidikan, id: "chartPendidikan" },
+    ];
+
+    // Render visible charts immediately
+    for (const chart of visibleCharts) {
+        if (document.getElementById(chart.id)) {
+            chart.func();
+        }
+    }
+
+    // Render background charts with delay
+    for (let i = 0; i < backgroundCharts.length; i++) {
+        const chart = backgroundCharts[i];
+        if (document.getElementById(chart.id)) {
+            setTimeout(() => {
+                chart.func();
+            }, i * 50); // 50ms delay between each chart
+        }
+    }
+}
+
+// Debounced chart rendering
+const debouncedRenderCharts = debounce(renderChartsAsync, 100);
+
 document.addEventListener("livewire:init", () => {
     Livewire.on("chartDataWarga", (data) => {
         console.log("Data diterima dari Livewire:", data);
 
         window.chartData = data[0];
 
+        // Destroy existing charts
         destroyAllCharts();
 
-        if (window.chartData) {
-            renderchartWargaWNA();
-            renderchartWargaWNI();
-            renderTotalWarga();
-            renderChartKelahiran();
-            renderChartKematian();
-            renderChartGenerasi();
-            renderChartPerkawinan();
-            renderChartAgama();
-            renderChartPendidikan();
-        }
+        // Render charts with debouncing
+        debouncedRenderCharts();
     });
 });
 
+// Optimized chart functions dengan early return dan error handling
 function renderchartWargaWNA() {
     const ctx = document.getElementById("chartWargaWNA");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.WNA) return;
 
     destroyChart("chartWargaWNA");
 
-    const dataWNA = [
-        window.chartData?.WNA?.L ?? 0,
-        window.chartData?.WNA?.P ?? 0,
-    ];
+    const dataWNA = [window.chartData.WNA.L ?? 0, window.chartData.WNA.P ?? 0];
 
-    window.chartInstances["chartWargaWNA"] = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            datasets: [
-                {
-                    label: "Jumlah Warga WNA",
-                    data: dataWNA,
-                    backgroundColor: [
-                        "rgba(54, 162, 235, 0.7)",
-                        "rgba(255, 99, 132, 0.7)",
-                    ],
+    try {
+        window.chartInstances["chartWargaWNA"] = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                datasets: [
+                    {
+                        label: "Jumlah Warga WNA",
+                        data: dataWNA,
+                        backgroundColor: [
+                            "rgba(54, 162, 235, 0.7)",
+                            "rgba(255, 99, 132, 0.7)",
+                        ],
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 500, // Reduce animation time
                 },
-            ],
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                datalabels: {
-                    color: "#000",
-                    anchor: "end",
-                    align: "end",
-                    formatter: (value) => `${value}`,
-                    font: {
-                        weight: "bold",
-                        size: 10,
+                plugins: {
+                    datalabels: {
+                        color: "#000",
+                        anchor: "end",
+                        align: "end",
+                        formatter: (value) => `${value}`,
+                        font: {
+                            weight: "bold",
+                            size: 10,
+                        },
                     },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
 
-    document.getElementById("wna-male").textContent = dataWNA[0];
-    document.getElementById("wna-female").textContent = dataWNA[1];
-    document.getElementById("summary-wna").textContent =
-        dataWNA[0] + dataWNA[1];
+        // Update DOM elements
+        const elements = {
+            "wna-male": dataWNA[0],
+            "wna-female": dataWNA[1],
+            "summary-wna": dataWNA[0] + dataWNA[1],
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        });
+    } catch (error) {
+        console.error("Error rendering WNA chart:", error);
+    }
 }
 
 function renderchartWargaWNI() {
     const ctx = document.getElementById("chartWargaWNI");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.WNI) return;
 
     destroyChart("chartWargaWNI");
 
-    const dataWNI = [
-        window.chartData?.WNI?.L ?? 0,
-        window.chartData?.WNI?.P ?? 0,
-    ];
+    const dataWNI = [window.chartData.WNI.L ?? 0, window.chartData.WNI.P ?? 0];
 
-    // console.log(dataWNI);
-    window.chartInstances["chartWargaWNI"] = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            datasets: [
-                {
-                    label: "Jumlah Warga WNI",
-                    data: dataWNI,
-                    backgroundColor: [
-                        "rgba(54, 162, 235, 0.7)",
-                        "rgba(255, 99, 132, 0.7)",
-                    ],
+    try {
+        window.chartInstances["chartWargaWNI"] = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                datasets: [
+                    {
+                        label: "Jumlah Warga WNI",
+                        data: dataWNI,
+                        backgroundColor: [
+                            "rgba(54, 162, 235, 0.7)",
+                            "rgba(255, 99, 132, 0.7)",
+                        ],
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 500,
                 },
-            ],
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                datalabels: {
-                    color: "#000",
-                    anchor: "end",
-                    align: "end",
-                    formatter: (value) => `${value}`,
-                    font: {
-                        weight: "bold",
-                        size: 10,
+                plugins: {
+                    datalabels: {
+                        color: "#000",
+                        anchor: "end",
+                        align: "end",
+                        formatter: (value) => `${value}`,
+                        font: {
+                            weight: "bold",
+                            size: 10,
+                        },
                     },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
 
-    document.getElementById("wni-male").textContent = dataWNI[0];
-    document.getElementById("wni-female").textContent = dataWNI[1];
-    document.getElementById("summary-wni").textContent =
-        dataWNI[0] + dataWNI[1];
+        // Update DOM elements efficiently
+        const elements = {
+            "wni-male": dataWNI[0],
+            "wni-female": dataWNI[1],
+            "summary-wni": dataWNI[0] + dataWNI[1],
+        };
 
-    // console.log("wni", dataWNI[0] + dataWNI[1]);
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        });
+    } catch (error) {
+        console.error("Error rendering WNI chart:", error);
+    }
 }
 
 function renderTotalWarga() {
     const ctx = document.getElementById("chartTotalWarga");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.TOTAL) return;
 
     destroyChart("chartTotalWarga");
 
-    const data = [
-        window.chartData?.TOTAL?.L ?? 0,
-        window.chartData?.TOTAL?.P ?? 0,
-    ];
-    window.chartInstances["chartTotalWarga"] = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            datasets: [
-                {
-                    label: "Total Warga",
-                    data: data,
-                    backgroundColor: [
-                        "rgba(54, 162, 235, 0.7)",
-                        "rgba(255, 99, 132, 0.7)",
-                    ],
+    const data = [window.chartData.TOTAL.L ?? 0, window.chartData.TOTAL.P ?? 0];
+
+    try {
+        window.chartInstances["chartTotalWarga"] = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                datasets: [
+                    {
+                        label: "Total Warga",
+                        data: data,
+                        backgroundColor: [
+                            "rgba(54, 162, 235, 0.7)",
+                            "rgba(255, 99, 132, 0.7)",
+                        ],
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 500,
                 },
-            ],
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                datalabels: {
-                    color: "#000",
-                    anchor: "end",
-                    align: "end",
-                    formatter: (value) => `${value}`,
-                    font: {
-                        weight: "bold",
-                        size: 10,
+                plugins: {
+                    datalabels: {
+                        color: "#000",
+                        anchor: "end",
+                        align: "end",
+                        formatter: (value) => `${value}`,
+                        font: {
+                            weight: "bold",
+                            size: 10,
+                        },
                     },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
 
-    document.getElementById("total-male").textContent = data[0];
-    document.getElementById("total-female").textContent = data[1];
-    document.getElementById("summary-total").textContent = data[0] + data[1];
+        // Update DOM elements
+        const elements = {
+            "total-male": data[0],
+            "total-female": data[1],
+            "summary-total": data[0] + data[1],
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        });
+    } catch (error) {
+        console.error("Error rendering Total chart:", error);
+    }
 }
 
+// Optimized bar chart functions
 function renderChartKelahiran() {
     const ctx = document.getElementById("chartKelahiran");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.dataKelahiran) return;
 
     destroyChart("chartKelahiran");
 
-    const years = Object.keys(window.chartData?.dataKelahiran || {});
+    const kelahiranL = [2021, 2022, 2023, 2024, 2025].map(
+        (year) => window.chartData?.dataKelahiran?.[year]?.L ?? 0
+    );
+    const kelahiranP = [2021, 2022, 2023, 2024, 2025].map(
+        (year) => window.chartData?.dataKelahiran?.[year]?.P ?? 0
+    );
 
-    const kelahiranL = [
-        window.chartData?.dataKelahiran?.[2021]?.L ?? 0,
-        window.chartData?.dataKelahiran?.[2022]?.L ?? 0,
-        window.chartData?.dataKelahiran?.[2023]?.L ?? 0,
-        window.chartData?.dataKelahiran?.[2024]?.L ?? 0,
-        window.chartData?.dataKelahiran?.[2025]?.L ?? 0,
-    ];
-    const kelahiranP = [
-        window.chartData?.dataKelahiran?.[2021]?.P ?? 0,
-        window.chartData?.dataKelahiran?.[2022]?.P ?? 0,
-        window.chartData?.dataKelahiran?.[2023]?.P ?? 0,
-        window.chartData?.dataKelahiran?.[2024]?.P ?? 0,
-        window.chartData?.dataKelahiran?.[2025]?.P ?? 0,
-    ];
-
-    // console.log("laki-laki", kelahiranL);
-    // console.log("perempuan", kelahiranP);
-
-    window.chartInstances["chartKelahiran"] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["2021", "2022", "2023", "2024", "2025"],
-            datasets: [
-                {
-                    label: years,
-                    data: kelahiranL,
-                    backgroundColor: "rgba(34, 211, 238, 0.8)",
-                    borderColor: "rgba(34, 211, 238, 1)",
-                    borderWidth: 1,
-                },
-                {
-                    label: "Perempuan",
-                    data: kelahiranP,
-                    backgroundColor: "rgba(244, 114, 182, 0.8)",
-                    borderColor: "rgba(244, 114, 182, 1)",
-                    borderWidth: 1,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: "y",
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    max: 30,
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                datalabels: {
-                    anchor: "end",
-                    align: "end",
-                    color: "#000",
-                    font: {
-                        weight: "bold",
-                        size: 10,
+    try {
+        window.chartInstances["chartKelahiran"] = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: ["2021", "2022", "2023", "2024", "2025"],
+                datasets: [
+                    {
+                        label: "Laki-laki",
+                        data: kelahiranL,
+                        backgroundColor: "rgba(34, 211, 238, 0.8)",
+                        borderColor: "rgba(34, 211, 238, 1)",
+                        borderWidth: 1,
                     },
-                    formatter: (value) => `${value}`,
+                    {
+                        label: "Perempuan",
+                        data: kelahiranP,
+                        backgroundColor: "rgba(244, 114, 182, 0.8)",
+                        borderColor: "rgba(244, 114, 182, 1)",
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 300,
+                },
+                indexAxis: "y",
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 30,
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                    datalabels: {
+                        anchor: "end",
+                        align: "end",
+                        color: "#000",
+                        font: {
+                            weight: "bold",
+                            size: 10,
+                        },
+                        formatter: (value) => `${value}`,
+                    },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
+    } catch (error) {
+        console.error("Error rendering Kelahiran chart:", error);
+    }
 }
 
+// Continue with other chart functions following the same optimization pattern...
 function renderChartKematian() {
     const ctx = document.getElementById("chartKematian");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.dataKematian) return;
 
     destroyChart("chartKematian");
 
-    const years = Object.keys(window.chartData?.dataKematian || {});
+    const kematianL = [2021, 2022, 2023, 2024, 2025].map(
+        (year) => window.chartData?.dataKematian?.[year]?.L ?? 0
+    );
+    const kematianP = [2021, 2022, 2023, 2024, 2025].map(
+        (year) => window.chartData?.dataKematian?.[year]?.P ?? 0
+    );
 
-    const kematianL = [
-        window.chartData?.dataKematian?.[2021]?.L ?? 0,
-        window.chartData?.dataKematian?.[2022]?.L ?? 0,
-        window.chartData?.dataKematian?.[2023]?.L ?? 0,
-        window.chartData?.dataKematian?.[2024]?.L ?? 0,
-        window.chartData?.dataKematian?.[2025]?.L ?? 0,
-    ];
-    const kematianP = [
-        window.chartData?.dataKematian?.[2021]?.P ?? 0,
-        window.chartData?.dataKematian?.[2022]?.P ?? 0,
-        window.chartData?.dataKematian?.[2023]?.P ?? 0,
-        window.chartData?.dataKematian?.[2024]?.P ?? 0,
-        window.chartData?.dataKematian?.[2025]?.P ?? 0,
-    ];
-
-    // console.log("laki-laki", kematianL);
-    // console.log("perempuan", kematianP);
-
-    window.chartInstances["chartKematian"] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: years,
-            datasets: [
-                {
-                    label: "Laki-laki",
-                    data: kematianL,
-                    backgroundColor: "rgba(34, 211, 238, 0.8)",
-                    borderColor: "rgba(34, 211, 238, 1)",
-                    borderWidth: 1,
-                },
-                {
-                    label: "Perempuan",
-                    data: kematianP,
-                    backgroundColor: "rgba(244, 114, 182, 0.8)",
-                    borderColor: "rgba(244, 114, 182, 1)",
-                    borderWidth: 1,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: "y",
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    max: 30,
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                datalabels: {
-                    anchor: "end",
-                    align: "end",
-                    color: "#000",
-                    font: {
-                        weight: "bold",
-                        size: 10,
+    try {
+        window.chartInstances["chartKematian"] = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: ["2021", "2022", "2023", "2024", "2025"],
+                datasets: [
+                    {
+                        label: "Laki-laki",
+                        data: kematianL,
+                        backgroundColor: "rgba(34, 211, 238, 0.8)",
+                        borderColor: "rgba(34, 211, 238, 1)",
+                        borderWidth: 1,
                     },
-                    formatter: (value) => `${value}`,
+                    {
+                        label: "Perempuan",
+                        data: kematianP,
+                        backgroundColor: "rgba(244, 114, 182, 0.8)",
+                        borderColor: "rgba(244, 114, 182, 1)",
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 300,
+                },
+                indexAxis: "y",
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 30,
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                    datalabels: {
+                        anchor: "end",
+                        align: "end",
+                        color: "#000",
+                        font: {
+                            weight: "bold",
+                            size: 10,
+                        },
+                        formatter: (value) => `${value}`,
+                    },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
+    } catch (error) {
+        console.error("Error rendering Kematian chart:", error);
+    }
 }
 
+// Apply same optimization pattern to remaining chart functions...
 function renderChartGenerasi() {
     const ctx = document.getElementById("chartGenerasi");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.generasi) return;
 
     destroyChart("chartGenerasi");
 
@@ -360,31 +430,9 @@ function renderChartGenerasi() {
         "Generasi Z",
     ];
 
-    const dataGenerasi = [
-        window.chartData?.generasi?.["Pre-Boomer"] ?? 0,
-        window.chartData?.generasi?.["Baby Boomer"] ?? 0,
-        window.chartData?.generasi?.["Generasi Alpha"] ?? 0,
-        window.chartData?.generasi?.["Generasi Beta"] ?? 0,
-        window.chartData?.generasi?.["Generasi X"] ?? 0,
-        window.chartData?.generasi?.["Generasi Y"] ?? 0,
-        window.chartData?.generasi?.["Generasi Z"] ?? 0,
-    ];
-
-    // console.log(dataGenerasi);
-
-    // console.log("Baby Boomer:", window.chartData?.generasi?.["Baby Boomer"]);
-    // console.log(
-    //     "Generasi Alpha:",
-    //     window.chartData?.generasi?.["Generasi Alpha"]
-    // );
-    // console.log(
-    //     "Generasi Beta:",
-    //     window.chartData?.generasi?.["Generasi Beta"]
-    // );
-    // console.log("Generasi X:", window.chartData?.generasi?.["Generasi X"]);
-    // console.log("Generasi Y:", window.chartData?.generasi?.["Generasi Y"]);
-    // console.log("Generasi Z:", window.chartData?.generasi?.["Generasi Z"]);
-    // console.log("Pre-Boomer:", window.chartData?.generasi?.["Pre-Boomer"]);
+    const dataGenerasi = generations.map(
+        (gen) => window.chartData?.generasi?.[gen] ?? 0
+    );
 
     const colors = [
         "rgba(34, 211, 238, 0.8)",
@@ -396,66 +444,60 @@ function renderChartGenerasi() {
         "rgba(239, 68, 68, 0.8)",
     ];
 
-    window.chartInstances["chartGenerasi"] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: generations,
-            datasets: [
-                {
-                    data: dataGenerasi,
-                    backgroundColor: colors,
-                    borderColor: colors.map((color) =>
-                        color.replace("0.8", "1")
-                    ),
-                    borderWidth: 1,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: "y",
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    max: 200,
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                datalabels: {
-                    anchor: "end",
-                    align: "end",
-                    color: "#000",
-                    font: {
-                        weight: "bold",
-                        size: 10,
+    try {
+        window.chartInstances["chartGenerasi"] = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: generations,
+                datasets: [
+                    {
+                        data: dataGenerasi,
+                        backgroundColor: colors,
+                        borderColor: colors.map((color) =>
+                            color.replace("0.8", "1")
+                        ),
+                        borderWidth: 1,
                     },
-                    formatter: (value) => `${value}`,
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 300 },
+                indexAxis: "y",
+                scales: {
+                    x: { beginAtZero: true, max: 200 },
+                },
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: "end",
+                        align: "end",
+                        color: "#000",
+                        font: { weight: "bold", size: 10 },
+                        formatter: (value) => `${value}`,
+                    },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
+    } catch (error) {
+        console.error("Error rendering Generasi chart:", error);
+    }
 }
 
+// Continue with optimized versions of remaining functions...
 function renderChartPerkawinan() {
     const ctx = document.getElementById("chartPerkawinan");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.perkawinan) return;
 
     destroyChart("chartPerkawinan");
 
     const categories = ["Belum Kawin", "Kawin", "Cerai Mati", "Cerai Hidup"];
-    const dataPerkawinan = [
-        window.chartData?.perkawinan?.["Belum Kawin"] ?? 0,
-        window.chartData?.perkawinan?.["Cerai Hidup"] ?? 0,
-        window.chartData?.perkawinan?.["Cerai Mati"] ?? 0,
-        window.chartData?.perkawinan?.["Kawin"] ?? 0,
-    ];
+    const dataPerkawinan = categories.map(
+        (cat) => window.chartData?.perkawinan?.[cat] ?? 0
+    );
 
-    // console.log(dataPerkawinan);
     const colors = [
         "rgba(34, 211, 238, 0.8)",
         "rgba(37, 99, 235, 0.8)",
@@ -463,53 +505,50 @@ function renderChartPerkawinan() {
         "rgba(79, 70, 229, 0.8)",
     ];
 
-    window.chartInstances["chartPerkawinan"] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: categories,
-            datasets: [
-                {
-                    data: dataPerkawinan,
-                    backgroundColor: colors,
-                    borderColor: colors.map((color) =>
-                        color.replace("0.8", "1")
-                    ),
-                    borderWidth: 1,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 1000,
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                datalabels: {
-                    anchor: "end",
-                    align: "end",
-                    color: "#000",
-                    font: {
-                        weight: "bold",
-                        size: 10,
+    try {
+        window.chartInstances["chartPerkawinan"] = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: categories,
+                datasets: [
+                    {
+                        data: dataPerkawinan,
+                        backgroundColor: colors,
+                        borderColor: colors.map((color) =>
+                            color.replace("0.8", "1")
+                        ),
+                        borderWidth: 1,
                     },
-                    formatter: (value) => `${value}`,
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 300 },
+                scales: {
+                    y: { beginAtZero: true, max: 1000 },
+                },
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: "end",
+                        align: "end",
+                        color: "#000",
+                        font: { weight: "bold", size: 10 },
+                        formatter: (value) => `${value}`,
+                    },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
+    } catch (error) {
+        console.error("Error rendering Perkawinan chart:", error);
+    }
 }
 
 function renderChartAgama() {
     const ctx = document.getElementById("chartAgama");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.agama) return;
 
     destroyChart("chartAgama");
 
@@ -522,32 +561,9 @@ function renderChartAgama() {
         "Konghucu",
         "Lainnya",
     ];
-    const dataAgama = [
-        window.chartData?.agama?.["Islam"] ?? 0,
-        window.chartData?.agama?.["Kristen"] ?? 0,
-        window.chartData?.agama?.["Katolik"] ?? 0,
-        window.chartData?.agama?.["Hindu"] ?? 0,
-        window.chartData?.agama?.["Buddha"] ?? 0,
-        window.chartData?.agama?.["Konghucu"] ?? 0,
-        window.chartData?.agama?.["Lainnya"] ?? 0,
-    ];
-
-    // console.log(
-    //     "Islam",
-    //     window.chartData?.agama?.["Islam"] ?? 0,
-    //     "Kristen",
-    //     window.chartData?.agama?.["Kristen"] ?? 0,
-    //     "Katolik",
-    //     window.chartData?.agama?.["Katolik"] ?? 0,
-    //     "Hindu",
-    //     window.chartData?.agama?.["Hindu"] ?? 0,
-    //     "Buddha",
-    //     window.chartData?.agama?.["Buddha"] ?? 0,
-    //     "Konghucu",
-    //     window.chartData?.agama?.["Konghucu"] ?? 0,
-    //     "Lainnya",
-    //     window.chartData?.agama?.["Lainnya"] ?? 0
-    // );
+    const dataAgama = categories.map(
+        (cat) => window.chartData?.agama?.[cat] ?? 0
+    );
 
     const colors = [
         "rgba(34, 211, 238, 0.8)",
@@ -559,52 +575,50 @@ function renderChartAgama() {
         "rgba(239, 68, 68, 0.8)",
     ];
 
-    window.chartInstances["chartAgama"] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: categories,
-            datasets: [
-                {
-                    data: dataAgama,
-                    backgroundColor: colors,
-                    borderColor: colors.map((color) =>
-                        color.replace("0.8", "1")
-                    ),
-                    borderWidth: 1,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                datalabels: {
-                    anchor: "end",
-                    align: "end",
-                    color: "#000",
-                    font: {
-                        weight: "bold",
-                        size: 10,
+    try {
+        window.chartInstances["chartAgama"] = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: categories,
+                datasets: [
+                    {
+                        data: dataAgama,
+                        backgroundColor: colors,
+                        borderColor: colors.map((color) =>
+                            color.replace("0.8", "1")
+                        ),
+                        borderWidth: 1,
                     },
-                    formatter: (value) => `${value}`,
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 300 },
+                scales: {
+                    y: { beginAtZero: true },
+                },
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: "end",
+                        align: "end",
+                        color: "#000",
+                        font: { weight: "bold", size: 10 },
+                        formatter: (value) => `${value}`,
+                    },
                 },
             },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
+    } catch (error) {
+        console.error("Error rendering Agama chart:", error);
+    }
 }
 
 function renderChartPendidikan() {
     const ctx = document.getElementById("chartPendidikan");
-    if (!ctx) return;
+    if (!ctx || !window.chartData?.pendidikan) return;
 
     destroyChart("chartPendidikan");
 
@@ -621,22 +635,9 @@ function renderChartPendidikan() {
         "SD",
         "Tidak Sekolah",
     ];
-
-    const dataPendidikan = [
-        window.chartData?.pendidikan?.["S3"] ?? 0,
-        window.chartData?.pendidikan?.["S2"] ?? 0,
-        window.chartData?.pendidikan?.["S1"] ?? 0,
-        window.chartData?.pendidikan?.["D4"] ?? 0,
-        window.chartData?.pendidikan?.["D3"] ?? 0,
-        window.chartData?.pendidikan?.["D2"] ?? 0,
-        window.chartData?.pendidikan?.["D1"] ?? 0,
-        window.chartData?.pendidikan?.["SMA"] ?? 0,
-        window.chartData?.pendidikan?.["SMP"] ?? 0,
-        window.chartData?.pendidikan?.["SD"] ?? 0,
-        window.chartData?.pendidikan?.["Tidak Sekolah"] ?? 0,
-    ];
-
-    // console.log(dataPendidikan);
+    const dataPendidikan = tingkatan.map(
+        (level) => window.chartData?.pendidikan?.[level] ?? 0
+    );
 
     const colors = [
         "rgba(30, 64, 175, 0.8)",
@@ -652,46 +653,51 @@ function renderChartPendidikan() {
         "rgba(107, 114, 128, 0.8)",
     ];
 
-    window.chartInstances["chartPendidikan"] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: tingkatan,
-            datasets: [
-                {
-                    data: dataPendidikan,
-                    backgroundColor: colors,
-                    borderColor: colors.map((c) => c.replace("0.8", "1")),
-                    borderWidth: 1,
+    try {
+        window.chartInstances["chartPendidikan"] = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: tingkatan,
+                datasets: [
+                    {
+                        data: dataPendidikan,
+                        backgroundColor: colors,
+                        borderColor: colors.map((c) => c.replace("0.8", "1")),
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 300 },
+                indexAxis: "y",
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 1000,
+                        ticks: { stepSize: 500 },
+                    },
                 },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: "y",
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    max: 1000,
-                    ticks: {
-                        stepSize: 500,
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: "end",
+                        align: "end",
+                        color: "#000",
+                        font: { weight: "bold", size: 10 },
+                        formatter: (value) => `${value}`,
                     },
                 },
             },
-            plugins: {
-                legend: { display: false },
-                datalabels: {
-                    anchor: "end",
-                    align: "end",
-                    color: "#000",
-                    font: {
-                        weight: "bold",
-                        size: 10,
-                    },
-                    formatter: (value) => `${value}`,
-                },
-            },
-        },
-        plugins: [ChartDataLabels],
-    });
+            plugins: [ChartDataLabels],
+        });
+    } catch (error) {
+        console.error("Error rendering Pendidikan chart:", error);
+    }
 }
+
+// Cleanup when page unloads
+window.addEventListener("beforeunload", () => {
+    destroyAllCharts();
+});

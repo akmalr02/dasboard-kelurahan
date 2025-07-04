@@ -132,25 +132,60 @@
                             <p class="text-gray-900 font-mono bg-gray-50 px-3 py-2 rounded border">
                                 {{ $selectedSurat->kode_verifikasi }}
                             </p>
+                            <!-- Barcode dari kode_verifikasi -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Barcode Kode
+                                    Verifikasi</label>
+                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG($selectedSurat->kode_verifikasi, 'QRCODE') }}"
+                                    alt="Barcode Kode Verifikasi"
+                                    class="border border-gray-300 bg-white p-2 rounded w-32 h-32">
+                            </div>
                         </div>
 
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Status Tanda Tangan
                                 Admin</label>
                             @if ($selectedSurat->file_ttd_admin)
-                                <div class="flex items-center space-x-3">
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
-                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        Sudah Ditandatangani
-                                    </span>
-                                    <img src="{{ asset('storage/' . $selectedSurat->file_ttd_admin) }}"
-                                        alt="Tanda Tangan Admin"
-                                        class="h-16 w-auto border border-gray-300 rounded bg-white p-2">
+                                <div class="flex flex-col space-y-6">
+
+                                    <!-- Status dan Gambar TTD -->
+                                    <div class="flex items-center space-x-3">
+                                        <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(asset('storage/' . $surat->file_ttd_admin), 'QRCODE') }}"
+                                            alt="QR TTD" class="w-32 h-32">
+                                        <span
+                                            class="inline-flex items-center px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+                                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                            Sudah Ditandatangani
+                                        </span>
+                                    </div>
+                                    <!-- Barcode dari path file tanda tangan -->
+                                    {{-- <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Barcode Path Tanda
+                                            Tangan</label>
+
+                                    </div> --}}
+
+                                    <!-- Tombol Download PDF -->
+                                    <div>
+                                        <a href="{{ route('kelahiran.download', $selectedSurat->id_kelahiran) }}"
+                                            target="_blank"
+                                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M3 3a1 1 0 011-1h4a1 1 0 010 2H5v12h10V4h-3a1 1 0 110-2h4a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V3z">
+                                                </path>
+                                                <path
+                                                    d="M9 12a1 1 0 102 0V7a1 1 0 10-2 0v5zM7 10a1 1 0 102 0V7a1 1 0 10-2 0v3z">
+                                                </path>
+                                            </svg>
+                                            Download PDF
+                                        </a>
+                                    </div>
+
                                 </div>
                             @else
                                 <span
@@ -163,6 +198,7 @@
                                     Belum Ditandatangani
                                 </span>
                             @endif
+
                         </div>
                     </div>
                 </div>

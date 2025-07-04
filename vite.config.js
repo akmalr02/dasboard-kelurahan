@@ -6,11 +6,18 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ["resources/css/app.css", "resources/js/app.js"],
-            refresh: [`resources/views/**/*`, "app/Http/Livewire/**/*.php"],
+            refresh: [
+                `resources/views/**/*`,
+                "app/Livewire/**/*.php",
+                "resources/views/livewire/**/*.blade.php",
+            ],
         }),
         tailwindcss(),
     ],
     server: {
         cors: true,
+        hmr: {
+            host: "localhost",
+        },
     },
 });
