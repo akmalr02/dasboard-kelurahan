@@ -146,8 +146,8 @@
                                     {{ $w->name }}
                                 @endif
                             </td>
-                            <td class="px-4 py-3 border-b">{{ $w->id_RW }}</td>
-                            <td class="px-4 py-3 border-b">{{ $w->id_RT }}</td>
+                            <td class="px-4 py-3 border-b">{{ $w->rw->no_RW }}</td>
+                            <td class="px-4 py-3 border-b">{{ $w->rt->no_RT }}</td>
                             <td class="px-4 py-3 border-b">
                                 <span
                                     class="px-2 py-1 text-xs font-medium rounded-full 

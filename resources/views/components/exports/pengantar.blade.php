@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Surat Kelahiran - Kelurahan Kramat-Senen</title>
+    <title>Surat Pengantar - Kelurahan Kramat-Senen</title>
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
@@ -142,76 +142,49 @@
             font-size: 10px;
             color: #666;
         }
-
-        .pelapor-section {
-            margin-top: 20px;
-        }
-
-        .pelapor-section h4 {
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #333;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
     </style>
 </head>
 
 <body>
     @include('components.exports.partials.pdf_header')
 
-    <div class="judul">SURAT KETERANGAN KELAHIRAN</div>
+    <div class="judul">SURAT PENGANTAR</div>
     <div class="nomor-surat">
-        No: {{ $surat->kode_verifikasi }}/SKL/{{ date('Y', strtotime($surat->tanggal_lahir)) }}
+        No: {{ $surat->kode_verifikasi }}/SP/{{ date('Y', strtotime($surat->tanggal_pengajuan)) }}
     </div>
 
     <table class="content-table">
         <tr>
             <td class="left-col">
-                <p><strong>Nama Anak</strong>: {{ $surat->nama_anak }}</p>
-                <p><strong>Jenis Kelamin</strong>: {{ $surat->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
-                <p><strong>Tempat Lahir</strong>: {{ $surat->tempat_lahir }}</p>
-                <p><strong>Tanggal Lahir</strong>: {{ \Carbon\Carbon::parse($surat->tanggal_lahir)->format('d M Y') }}
-                </p>
-                <p><strong>Hari Lahir</strong>: {{ $surat->hari_lahir }}</p>
+                <p><strong>Nama</strong>: {{ $surat->nama }}</p>
+                <p><strong>NIK</strong>: {{ $surat->NIK }}</p>
+                <p><strong>NKK</strong>: {{ $surat->NKK }}</p>
+                <p><strong>Jenis Kelamin</strong>: {{ $surat->jenis_kelamin }}</p>
+                <p><strong>Tempat, Tgl Lahir</strong>: {{ $surat->tempat_lahir }}, {{ $surat->tanggal_lahir }}</p>
+                <p><strong>Status Perkawinan</strong>: {{ $surat->status_perkawinan }}</p>
             </td>
             <td class="right-col">
-                <p><strong>Nama Ayah</strong>: {{ $surat->ayah->name ?? '-' }}</p>
-                <p><strong>NIK Ayah</strong>: {{ $surat->ayah->NIK ?? '-' }}</p>
-                <p><strong>Nama Ibu</strong>: {{ $surat->ibu->name ?? '-' }}</p>
-                <p><strong>NIK Ibu</strong>: {{ $surat->ibu->NIK ?? '-' }}</p>
-                <p><strong>Alamat</strong>: {{ $surat->ayah->alamat ?? ($surat->ibu->alamat ?? '-') }}</p>
+                <p><strong>Agama</strong>: {{ $surat->agama }}</p>
+                <p><strong>Pekerjaan</strong>: {{ $surat->pekerjaan }}</p>
+                <p><strong>Kewarganegaraan</strong>: {{ $surat->kewarganegaraan }}</p>
+                <p><strong>Alamat</strong>: {{ $surat->alamat }}</p>
+                <p><strong>RT/RW</strong>: {{ $surat->warga->rt->no_RT ?? '-' }}/{{ $surat->warga->rw->no_RW ?? '-' }}
+                </p>
+                <p><strong>Email</strong>: {{ $surat->email }}</p>
             </td>
         </tr>
     </table>
 
-    <!-- Informasi Orang Tua -->
-    <div class="pelapor-section">
-        <h4>Data Orang Tua:</h4>
-        <table class="content-table">
-            <tr>
-                <td class="left-col">
-                    <p><strong>Agama Ayah</strong>: {{ $surat->ayah->agama ?? '-' }}</p>
-                    <p><strong>Pekerjaan Ayah</strong>: {{ $surat->ayah->pekerjaan ?? '-' }}</p>
-                    <p><strong>RT/RW Ayah</strong>:
-                        {{ $surat->ayah->rt->no_RT ?? '-' }}/{{ $surat->ayah->rw->no_RW ?? '-' }}</p>
-                </td>
-                <td class="right-col">
-                    <p><strong>Agama Ibu</strong>: {{ $surat->ibu->agama ?? '-' }}</p>
-                    <p><strong>Pekerjaan Ibu</strong>: {{ $surat->ibu->pekerjaan ?? '-' }}</p>
-                    <p><strong>RT/RW Ibu</strong>:
-                        {{ $surat->ibu->rt->no_RT ?? '-' }}/{{ $surat->ibu->rw->no_RW ?? '-' }}</p>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <p><strong>Keperluan</strong>: {{ $surat->keperluan }}</p>
+    <p><strong>Tanggal Pengajuan</strong>: {{ \Carbon\Carbon::parse($surat->tanggal_pengajuan)->format('d M Y') }}</p>
+    <p><strong>Status</strong>: {{ ucfirst($surat->status) }}</p>
 
     <div class="pernyataan">
         Saya yang bertanda tangan di bawah ini menyatakan bahwa data di atas adalah benar dan digunakan untuk keperluan
         yang disebutkan.
     </div>
 
-    @include('components.exports.partials.pdf_barcodeAdmin')
+    @include('components.exports.partials.pdf_barcodeRtRw')
     @include('components.exports.partials.pdf_footer')
 </body>
 

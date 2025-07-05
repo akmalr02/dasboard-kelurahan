@@ -76,9 +76,11 @@ class DataWargaController extends Component
                     ->orWhere('NKK', 'like', '%' . $this->search . '%')
                     ->orWhere('alamat', 'like', '%' . $this->search . '%');
             });
+        $noRW = $user->rw->no_RW ?? 'RW Tidak Diketahui';
+
 
         return view('livewire.user.r-w.data-warga', [
-            'title' => 'Data warga RW',
+            'title' => 'Data Warga RW ' . $noRW,
             'wargas' => $query
                 ->orderBy('id_RW')
                 ->orderBy('id_RT')

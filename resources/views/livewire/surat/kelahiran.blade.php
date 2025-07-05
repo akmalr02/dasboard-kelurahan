@@ -2,7 +2,7 @@
     <!-- Header Section -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3">
         <div class="max-w-7xl mx-auto px-6">
-            <h1 class="text-3xl font-bold mb-2">Surat Kelahiran</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ $title }}</h1>
         </div>
     </div>
 
@@ -147,7 +147,6 @@
                                 Admin</label>
                             @if ($selectedSurat->file_ttd_admin)
                                 <div class="flex flex-col space-y-6">
-
                                     <!-- Status dan Gambar TTD -->
                                     <div class="flex items-center space-x-3">
                                         <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(asset('storage/' . $surat->file_ttd_admin), 'QRCODE') }}"
@@ -162,16 +161,9 @@
                                             Sudah Ditandatangani
                                         </span>
                                     </div>
-                                    <!-- Barcode dari path file tanda tangan -->
-                                    {{-- <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Barcode Path Tanda
-                                            Tangan</label>
-
-                                    </div> --}}
-
                                     <!-- Tombol Download PDF -->
                                     <div>
-                                        <a href="{{ route('kelahiran.download', $selectedSurat->id_kelahiran) }}"
+                                        <a href="{{ route('surat.download', ['jenis' => 'kelahiran', 'id' => $selectedSurat->id_kelahiran]) }}"
                                             target="_blank"
                                             class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">

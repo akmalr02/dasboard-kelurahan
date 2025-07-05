@@ -10,8 +10,7 @@ Route::get('/test-laravel', function () {
 
 Route::get('/', Welcome::class)->name('welcome')->middleware(['guest']);
 
-Route::get('/surat/kelahiran/{id}/download', [ExportSuratController::class, 'downloadKelahiran'])
-    ->name('kelahiran.download');
+Route::get('/surat/{jenis}/{id}/download', [ExportSuratController::class, 'download'])->name('surat.download');
 
 require __DIR__ . '/dashboard.php';
 require __DIR__ . '/auth.php';

@@ -40,7 +40,7 @@ class IndexController extends Component
 
         // dd($data);
         return view('livewire.user.r-t.index', [
-            'title' => 'RT Dashboard',
+            'title' => 'Data Keluarga',
             'keluarga' => $data
 
         ]);

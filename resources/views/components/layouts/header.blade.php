@@ -70,10 +70,27 @@
                             class="{{ request()->routeIs('rw.warga') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
                             Data Warga RW
                         </a>
+                        <div class="flex items-center gap-4 relative" x-data="{ bukaSurat: false }">
+                            <button @click="bukaSurat = !bukaSurat"
+                                class="text-white hover:bg-sky-700 rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
+                                <span>Pengajuan Surat</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="bukaSurat" @click.outside="bukaSurat = false" x-transition
+                                class="absolute top-full mt-2 bg-white w-48 rounded-md shadow-lg z-50">
+                                <a href="{{ route('add.pengantar') }}" wire:navigate
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                                    Pengantar</a>
+                            </div>
+                        </div>
+                        {{-- pebuatan --}}
                         <div class="flex items-center gap-4 relative" x-data="{ openSurat: false }">
                             <button @click="openSurat = !openSurat"
                                 class="text-white hover:bg-sky-700 rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
-                                <span>Surat</span>
+                                <span>Pembuatan Surat</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 9l-7 7-7-7" />
@@ -81,15 +98,21 @@
                             </button>
                             <div x-show="openSurat" @click.outside="openSurat = false" x-transition
                                 class="absolute top-full mt-2 bg-white w-48 rounded-md shadow-lg z-50">
-                                <a href="{{ route('add.pengantar') }}" wire:navigate
+                               <a href="{{ route('pengantar') }}" wire:navigate
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
                                     Pengantar</a>
+                                <a href="{{ route('kelahiran') }}" wire:navigate
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                                    Kelahiran</a>
+                                <a href="{{ route('kematian') }}" wire:navigate
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                                    Kematian</a>
                             </div>
-                            <a href="#" wire:navigate
-                                class="{{ request()->routeIs('#') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
-                                History
-                            </a>
                         </div>
+                        <a href="#" wire:navigate
+                            class="{{ request()->routeIs('#') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
+                            History
+                        </a>
                     @elseif (Auth::user()->role == 'pengelola_rt')
                         <a href="{{ route('rt.warga') }}" wire:navigate
                             class="{{ request()->routeIs('rt.warga') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
@@ -110,11 +133,11 @@
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
                                     Pengantar</a>
                             </div>
-                            <a href="#" wire:navigate
-                                class="{{ request()->routeIs('#') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
-                                History
-                            </a>
                         </div>
+                        <a href="#" wire:navigate
+                            class="{{ request()->routeIs('#') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
+                            History
+                        </a>
                     @elseif (Auth::user()->role == 'warga')
                         <div class="flex items-center gap-4 relative" x-data="{ openSurat: false }">
                             <button @click="openSurat = !openSurat"

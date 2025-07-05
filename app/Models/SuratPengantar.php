@@ -11,7 +11,7 @@ class SuratPengantar extends Model
     use HasFactory;
 
     protected $primaryKey = 'id_pengajuan';
-    protected $table = 'surat_Pengantars';
+    protected $table = 'surat_pengantars';
 
     protected $fillable = [
         'id_pengantar',
@@ -36,4 +36,25 @@ class SuratPengantar extends Model
         'file_ttd_rw',
         'kode_verifikasi',
     ];
+    // Relasi ke user (pelapor)
+    public function pelapor()
+    {
+        return $this->belongsTo(User::class, 'id_pengantar', 'id_user');
+    }
+
+    public function warga()
+    {
+        return $this->belongsTo(Warga::class, 'id_pengantar', 'id_warga');
+    }
+
+    // Opsional: Relasi ke RT & RW
+    public function rt()
+    {
+        return $this->belongsTo(RT::class, 'id_rt');
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(RW::class, 'id_rw');
+    }
 }

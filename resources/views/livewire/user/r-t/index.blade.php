@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="bg-white shadow-sm border-b">
         <div class="max-w-7xl mx-auto px-6 py-6">
-            <h1 class="text-2xl font-semibold text-gray-900">Anggota Keluarga</h1>
+            <h1 class="text-2xl font-semibold text-gray-900">{{ $title }}</h1>
             <p class="text-gray-600 mt-1">Lihat informasi anggota keluarga</p>
         </div>
     </div>

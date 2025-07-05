@@ -16,7 +16,7 @@
                         <th class="px-4 py-4 border-b">Nama Almarhum</th>
                         <th class="px-4 py-4 border-b">Jenis Kelamin</th>
                         <th class="px-4 py-4 border-b">Tanggal Meninggal</th>
-                        <th class="px-4 py-4 border-b">Jam</th>
+                        <th class="px-4 py-4 border-b">Jam Kematian</th>
                         <th class="px-4 py-4 border-b">Tempat Pemakaman</th>
                         <th class="px-4 py-4 border-b">Aksi</th>
                     </tr>
@@ -168,12 +168,14 @@
                             @endif
                         </div>
                     </div>
-                    @if (Auth::user()->role === 'admin' && !$selectedSurat->file_ttd_admin)
-                        <button wire:click="isiTtdAdmin({{ $selectedSurat->id_kelahiran }})"
+                    @if (Auth::user()->role === 'admin' && $selectedSurat && !$selectedSurat->file_ttd_admin)
+                        <button x-data
+                            x-on:click.prevent="if (confirm('Apakah Anda yakin ingin menandatangani surat ini?')) { $wire.isiTtdAdmin({{ $selectedSurat->id_kematian }}) }"
                             class="mr-3 px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
                             Tanda Tangani Sekarang
                         </button>
                     @endif
+
                 </div>
 
                 <!-- Footer -->

@@ -73,6 +73,8 @@ class DataWargaController extends Component
                     ->orWhere('NKK', 'like', '%' . $this->search . '%')
                     ->orWhere('alamat', 'like', '%' . $this->search . '%');
             });
+        $noRW = $user->rw->no_RW ?? 'RW Tidak Diketahui';
+        $noRT = $user->rt->no_RT ?? 'RW Tidak Diketahui';
 
         // dd(Auth::user());
         // dd(Warga::first());
@@ -80,7 +82,7 @@ class DataWargaController extends Component
         // $wargas = Warga::where('id_RT', $user->id_rt)->get();
         // dd('berhasil');
         return view('livewire.user.r-t.data-warga', [
-            'title' => 'Data KeluargaW',
+            'title' => 'Data Warga RW ' . $noRW . '/' . 'RT ' . $noRT,
             'wargas' => $query
                 ->orderBy('id_RW')
                 ->orderBy('id_RT')

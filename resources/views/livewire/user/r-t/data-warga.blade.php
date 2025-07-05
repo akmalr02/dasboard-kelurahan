@@ -2,7 +2,7 @@
     <!-- Header Section -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3">
         <div class="max-w-7xl mx-auto px-6">
-            <h1 class="text-3xl font-bold mb-2">Dashboard Ketua RT</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ $title }}</h1>
         </div>
     </div>
     <div class="p-6">
@@ -11,7 +11,7 @@
             <h2 class="text-xl font-semibold text-gray-800">Data Warga</h2>
 
             <button wire:click="downloadDataRT" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                Download Data RT {{ Auth::user()->id_rt }}
+                Download Data RT {{ Auth::user()->rt->no_RT }}
             </button>
 
 
@@ -102,8 +102,8 @@
                                     {{ $w->name }}
                                 @endif
                             </td>
-                            <td class="px-4 py-3 border-b">{{ $w->id_RW }}</td>
-                            <td class="px-4 py-3 border-b">{{ $w->id_RT }}</td>
+                            <td class="px-4 py-3 border-b">{{ $w->rw->no_RW }}</td>
+                            <td class="px-4 py-3 border-b">{{ $w->rt->no_RT }}</td>
                             <td class="px-4 py-3 border-b">
                                 <span
                                     class="px-2 py-1 text-xs font-medium rounded-full 

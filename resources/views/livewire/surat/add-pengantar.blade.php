@@ -16,7 +16,7 @@
                         <th class="px-4 py-3 border-b">Nama</th>
                         <th class="px-4 py-3 border-b">NIK</th>
                         <th class="px-4 py-3 border-b">Keperluan</th>
-                        <th class="px-4 py-3 border-b">Kode Verifikasi</th>
+                        <th class="px-4 py-3 border-b">RW/RT</th>
                         <th class="px-4 py-3 border-b">Status</th>
                         <th class="px-4 py-3 border-b">Tanggal Pengajuan</th>
                         <th class="px-4 py-3 border-b">Aksi</th>
@@ -29,7 +29,7 @@
                             <td class="px-4 py-3">{{ $item->nama }}</td>
                             <td class="px-4 py-3">{{ $item->NIK }}</td>
                             <td class="px-4 py-3">{{ $item->keperluan }}</td>
-                            <td class="px-4 py-3">{{ $item->kode_verifikasi }}</td>
+                            <td class="px-4 py-3">{{ $item->rw->no_RW ?? '-' }}/{{ $item->rt->no_RT ?? '-' }}</td>
                             <td class="px-4 py-3">
                                 <span
                                     class="px-2 py-1 rounded-full text-sm font-semibold
@@ -77,35 +77,79 @@
                 </div>
 
                 <!-- Content -->
-                <div class="p-6 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Nama</label>
-                            <p class="text-gray-800">{{ $selectedSurat->nama }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">NIK</label>
-                            <p class="text-gray-800">{{ $selectedSurat->NIK }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Keperluan</label>
-                            <p class="text-gray-800">{{ $selectedSurat->keperluan }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Kode Verifikasi</label>
-                            <p class="text-gray-800">{{ $selectedSurat->kode_verifikasi }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Tanggal Pengajuan</label>
-                            <p class="text-gray-800">
-                                {{ \Carbon\Carbon::parse($selectedSurat->tanggal_pengajuan)->format('d M Y') }}
-                            </p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Status</label>
-                            <p class="text-gray-800 font-semibold">
-                                {{ ucfirst($selectedSurat->status) }}
-                            </p>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 gap-3">
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
+                                <span class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                        </path>
+                                    </svg>
+                                    Data Pribadi
+                                </span>
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                                    <p class="text-gray-900 font-semibold">{{ $selectedSurat->nama }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">NIK</label>
+                                    <p class="text-gray-900 font-mono">{{ $selectedSurat->NIK }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                                    <p class="text-gray-900">{{ $selectedSurat->jenis_kelamin }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tempat/Tanggal
+                                        Lahir</label>
+                                    <p class="text-gray-900">{{ $selectedSurat->tempat_lahir }},
+                                        {{ $selectedSurat->tanggal_lahir }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Status
+                                        Perkawinan</label>
+                                    <p class="text-gray-900">{{ $selectedSurat->status_perkawinan }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">NKK</label>
+                                    <p class="text-gray-900 font-mono">{{ $selectedSurat->NKK }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Kewarganegaraan</label>
+                                    <p class="text-gray-900">{{ $selectedSurat->kewarganegaraan }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Agama</label>
+                                    <p class="text-gray-900">{{ $selectedSurat->agama }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Pekerjaan</label>
+                                    <p class="text-gray-900">{{ $selectedSurat->pekerjaan }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <p class="text-gray-900 break-all">{{ $selectedSurat->email }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                                    <p class="text-gray-900">{{ $selectedSurat->alamat }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">RW/RT</label>
+                                    <p class="text-gray-900">
+                                        {{ $selectedSurat->pelapor->rw->no_RW ?? '-' }}/{{ $selectedSurat->pelapor->rt->no_RT ?? '-' }}
+                                    </p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Keperluan</label>
+                                    <p class="text-gray-900 font-semibold">{{ $selectedSurat->keperluan }}</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="md:col-span-2">
@@ -134,12 +178,14 @@
                             @endif
                         </div>
                         @if (Auth::user()->role === 'pengelola_rw' && !$selectedSurat->file_ttd_rw)
-                            <button wire:click="ttdRw({{ $selectedSurat->id_pengajuan }})"
+                            <button x-data
+                                x-on:click.prevent="if (confirm('Apakah Anda yakin ingin menandatangani surat ini?')) { $wire.ttdRw({{ $selectedSurat->id_pengajuan }}) }"
                                 class="mr-3 px-6 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors">
                                 Tanda Tangani RW
                             </button>
                         @elseif (Auth::user()->role === 'pengelola_rt' && !$selectedSurat->file_ttd_rt)
-                            <button wire:click="ttdRt({{ $selectedSurat->id_pengajuan }})"
+                            <button x-data
+                                x-on:click.prevent="if (confirm('Apakah Anda yakin ingin menandatangani surat ini?')) { $wire.ttdRt({{ $selectedSurat->id_pengajuan }}) }"
                                 class="mr-3 px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
                                 Tanda Tangani RT
                             </button>

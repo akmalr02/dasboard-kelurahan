@@ -42,6 +42,7 @@ class KematianController extends Component
     {
         // dd('berhasil kematian');
         return view('livewire.surat.kematian', [
+            'title' => 'Pengajuan surat kematian',
             'kematianList' => $this->dataKematian
         ]);
     }

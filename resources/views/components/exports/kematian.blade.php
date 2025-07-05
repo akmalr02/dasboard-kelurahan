@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Surat Kelahiran - Kelurahan Kramat-Senen</title>
+    <title>Surat Kematian - Kelurahan Kramat-Senen</title>
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
@@ -142,66 +142,50 @@
             font-size: 10px;
             color: #666;
         }
-
-        .pelapor-section {
-            margin-top: 20px;
-        }
-
-        .pelapor-section h4 {
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #333;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
     </style>
 </head>
 
 <body>
     @include('components.exports.partials.pdf_header')
 
-    <div class="judul">SURAT KETERANGAN KELAHIRAN</div>
+    <div class="judul">SURAT KETERANGAN KEMATIAN</div>
     <div class="nomor-surat">
-        No: {{ $surat->kode_verifikasi }}/SKL/{{ date('Y', strtotime($surat->tanggal_lahir)) }}
+        No: {{ $surat->kode_verifikasi }}/SK/{{ date('Y', strtotime($surat->tanggal_meninggal)) }}
     </div>
 
     <table class="content-table">
         <tr>
             <td class="left-col">
-                <p><strong>Nama Anak</strong>: {{ $surat->nama_anak }}</p>
-                <p><strong>Jenis Kelamin</strong>: {{ $surat->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
-                <p><strong>Tempat Lahir</strong>: {{ $surat->tempat_lahir }}</p>
-                <p><strong>Tanggal Lahir</strong>: {{ \Carbon\Carbon::parse($surat->tanggal_lahir)->format('d M Y') }}
+                <p><strong>Nama Almarhum</strong>: {{ $surat->nama_warga }}</p>
+                <p><strong>Tempat Lahir</strong>: {{ $surat->tempat_lahir ?? '-' }}</p>
+                <p><strong>Tanggal Lahir</strong>:
+                    {{ $surat->tanggal_lahir ? \Carbon\Carbon::parse($surat->tanggal_lahir)->format('d M Y') : '-' }}
                 </p>
-                <p><strong>Hari Lahir</strong>: {{ $surat->hari_lahir }}</p>
+                <p><strong>Jenis Kelamin</strong>: {{ $surat->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                <p><strong>Agama</strong>: {{ $surat->agama }}</p>
+                <p><strong>Alamat</strong>: {{ $surat->alamat ?? '-' }}</p>
             </td>
             <td class="right-col">
-                <p><strong>Nama Ayah</strong>: {{ $surat->ayah->name ?? '-' }}</p>
-                <p><strong>NIK Ayah</strong>: {{ $surat->ayah->NIK ?? '-' }}</p>
-                <p><strong>Nama Ibu</strong>: {{ $surat->ibu->name ?? '-' }}</p>
-                <p><strong>NIK Ibu</strong>: {{ $surat->ibu->NIK ?? '-' }}</p>
-                <p><strong>Alamat</strong>: {{ $surat->ayah->alamat ?? ($surat->ibu->alamat ?? '-') }}</p>
+                <p><strong>Hari Meninggal</strong>: {{ $surat->hari_meninggal }}</p>
+                <p><strong>Tanggal Meninggal</strong>:
+                    {{ \Carbon\Carbon::parse($surat->tanggal_meninggal)->format('d M Y') }}</p>
+                <p><strong>Jam Meninggal</strong>: {{ $surat->jam_meninggal }}</p>
+                <p><strong>Penyebab Kematian</strong>: {{ $surat->penyebab ?? '-' }}</p>
+                <p><strong>Tempat Pemakaman</strong>: {{ $surat->tempat_pemakaman ?? '-' }}</p>
+                <p><strong>RT/RW</strong>:
+                    {{ $surat->pelapor->rt->no_RT ?? '-' }}/{{ $surat->pelapor->rw->no_RW ?? '-' }}</p>
             </td>
         </tr>
     </table>
 
-    <!-- Informasi Orang Tua -->
+    <!-- Informasi Pelapor -->
     <div class="pelapor-section">
-        <h4>Data Orang Tua:</h4>
+        <h4>Data Pelapor:</h4>
         <table class="content-table">
             <tr>
-                <td class="left-col">
-                    <p><strong>Agama Ayah</strong>: {{ $surat->ayah->agama ?? '-' }}</p>
-                    <p><strong>Pekerjaan Ayah</strong>: {{ $surat->ayah->pekerjaan ?? '-' }}</p>
-                    <p><strong>RT/RW Ayah</strong>:
-                        {{ $surat->ayah->rt->no_RT ?? '-' }}/{{ $surat->ayah->rw->no_RW ?? '-' }}</p>
-                </td>
-                <td class="right-col">
-                    <p><strong>Agama Ibu</strong>: {{ $surat->ibu->agama ?? '-' }}</p>
-                    <p><strong>Pekerjaan Ibu</strong>: {{ $surat->ibu->pekerjaan ?? '-' }}</p>
-                    <p><strong>RT/RW Ibu</strong>:
-                        {{ $surat->ibu->rt->no_RT ?? '-' }}/{{ $surat->ibu->rw->no_RW ?? '-' }}</p>
-                </td>
+                <p><strong>Nama Pelapor</strong>: {{ $surat->pelapor->name ?? '-' }}</p>
+                <p><strong>NIK Pelapor</strong>: {{ $surat->pelapor->NIK ?? '-' }}</p>
+                <p><strong>Alamat Pelapor</strong>: {{ $surat->pelapor->alamat ?? '-' }}</p>
             </tr>
         </table>
     </div>

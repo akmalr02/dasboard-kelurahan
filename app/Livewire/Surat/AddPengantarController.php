@@ -10,18 +10,35 @@ class AddPengantarController extends Component
 {
     protected string $layout = 'layouts.app';
 
-    public $SuratPengantar = [];
+    public $suratPengantar = [];
     public $showModal = false;
     public $selectedSurat = null;
 
     public function mount()
     {
-        $this->SuratPengantar = SuratPengantar::all();
+        $user = Auth::user();
+
+        $surat = $this->suratPengantar = SuratPengantar::with('rt', 'rw')
+            ->when($user->role === 'pengelola_rt', fn($q) => $q->where('id_rt', $user->id_rt))
+            ->when($user->role === 'pengelola_rw', fn($q) => $q->where('id_rw', $user->id_rw))
+            ->latest()
+            ->get();
+
+        // dd($surat);
     }
 
     public function showDetail($id)
     {
-        $this->selectedSurat = SuratPengantar::find($id);
+        $surat = SuratPengantar::findOrFail($id);
+        $user = Auth::user();
+        if (
+            ($user->role === 'pengelola_rt' && $surat->id_rt != $user->id_rt) ||
+            ($user->role === 'pengelola_rw' && $surat->id_rw != $user->id_rw)
+        ) {
+            abort(403, 'Anda tidak berhak melihat surat ini.');
+        }
+
+        $this->selectedSurat = $surat;
         $this->showModal = true;
     }
 
@@ -111,7 +128,7 @@ class AddPengantarController extends Component
         // dd('pengantar');
         return view('livewire.surat.add-pengantar', [
             'title' => 'Pengajuan Surat Pengantar',
-            'pengantars' => $this->SuratPengantar,
+            'pengantars' => $this->suratPengantar,
         ]);
     }
 }
