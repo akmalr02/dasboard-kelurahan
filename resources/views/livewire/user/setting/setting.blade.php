@@ -82,11 +82,8 @@
                         <!-- Tanda Tangan Digital -->
                         <div class="space-y-4">
                             @livewire('user.setting.ttd-setting-form')
-                            {{-- </div> --}}
                         </div>
-
                     @endauth
-
                 </div>
             </div>
 

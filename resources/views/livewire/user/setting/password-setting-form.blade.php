@@ -135,7 +135,7 @@
                         class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
                         Batal
                     </button>
-                    <button type="submit" :disabled="isUpdating"
+                    <button type="submit" wire:loading.attr="disabled" wire:target="gantiPassword"
                         class="px-4 py-2 text-sm font-medium text-white bg-gray-700 hover:bg-gray-800 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span wire:loading.remove wire:target="gantiPassword">Simpan Password</span>
                         <span wire:loading wire:target="gantiPassword" class="flex items-center">

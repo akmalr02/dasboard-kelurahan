@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Surat;
+namespace App\Livewire\Surat\Kematian;
 
 use Livewire\Component;
 use App\Models\SuratKematian;
@@ -60,7 +60,7 @@ class CreateKematianController extends Component
 
     public function render()
     {
-        return view('livewire.surat.create-kematian');
+        return view('livewire.surat.kematian.create-kematian');
     }
 
     public function create()

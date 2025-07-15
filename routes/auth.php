@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\User\AuthController;
 use App\Livewire\User\RegisterController;
-use App\Livewire\User\SettingController;
+use App\Livewire\User\Setting\SettingController;
 
 // Halaman login
 Route::get('/login', AuthController::class)->name('login');

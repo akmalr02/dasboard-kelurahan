@@ -15,7 +15,7 @@ class TtdSettingForm extends Component
     public User $user;
     public $ttd_digital;
     public $showTtdModal = false;
-    public $isUploading = false;
+    // public $isUploading = false;
 
     protected $rules = [
         'ttd_digital' => 'required|image|mimes:png,jpg,jpeg|max:1024'
@@ -35,7 +35,7 @@ class TtdSettingForm extends Component
 
     public function uploadTandaTangan()
     {
-        $this->isUploading = true;
+        // $this->isUploading = true;
         $this->validate();
 
         // Hapus tanda tangan lama jika ada
@@ -49,7 +49,7 @@ class TtdSettingForm extends Component
         $this->user->update(['ttd_digital' => $path]);
 
         $this->reset(['ttd_digital', 'showTtdModal']);
-        $this->isUploading = false;
+        // $this->isUploading = false;
 
         session()->flash('success', 'Tanda tangan berhasil diunggah.');
         $this->dispatch('ttd-uploaded');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\User\Setting;
 
 use App\Models\User;
 use App\Models\Warga;
@@ -14,7 +14,7 @@ class SettingController extends Component
         $user = Auth::user();
         $warga = $user?->warga;
 
-        return view('livewire.user.setting', [
+        return view('livewire.user.setting.setting', [
             'title' => 'Pengaturan Akun',
             'user' => $user,
             'warga' => $warga,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Surat;
+namespace App\Livewire\Surat\Pengantar;
 
 use App\Models\SuratPengantar;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +126,7 @@ class AddPengantarController extends Component
     public function render()
     {
         // dd('pengantar');
-        return view('livewire.surat.add-pengantar', [
+        return view('livewire.surat.pengantar.add-pengantar', [
             'title' => 'Pengajuan Surat Pengantar',
             'pengantars' => $this->suratPengantar,
         ]);

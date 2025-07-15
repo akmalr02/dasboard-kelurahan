@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Surat;
+namespace App\Livewire\Surat\Pengantar;
 
 use App\Models\Warga;
 use Livewire\Component;
@@ -27,7 +27,7 @@ class CreatePengantarController extends Component
 
     protected array $rules = [
         'nama' => 'required|string|max:225',
-        'NIK' => 'required|numeric|digits_between:8,20|unique:surat_pengantars,NIK',
+        'NIK' => 'required|numeric|digits_between:8,20',
         'NKK' => 'required|numeric|digits_between:8,20',
         'jenis_kelamin' => 'required|in:L,P',
         'tempat_lahir' => 'nullable|string|max:100',
@@ -47,7 +47,6 @@ class CreatePengantarController extends Component
         'NIK.required' => 'NIK wajib diisi.',
         'NIK.numeric' => 'NIK harus berupa angka.',
         'NIK.digits_between' => 'NIK harus antara 8 sampai 20 digit.',
-        'NIK.unique' => 'NIK sudah digunakan untuk pengajuan surat.',
         'NKK.required' => 'NKK wajib diisi.',
         'NKK.numeric' => 'NKK harus berupa angka.',
         'NKK.digits_between' => 'NKK harus antara 8 sampai 20 digit.',
@@ -153,6 +152,6 @@ class CreatePengantarController extends Component
 
     public function render()
     {
-        return view('livewire.surat.create-pengantar');
+        return view('livewire.surat.pengantar.create-pengantar');
     }
 }

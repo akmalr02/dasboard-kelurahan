@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Surat;
+namespace App\Livewire\Surat\Kelahiran;
 
 use App\Models\Warga;
 use Livewire\Component;
@@ -58,7 +58,7 @@ class CreateKelahiranController extends Component
 
     public function render()
     {
-        return view('livewire.surat.create-kelahiran', [
+        return view('livewire.surat.kelahiran.create-kelahiran', [
             'anggotaKeluarga' => $this->anggotaKeluarga
         ]);
     }
@@ -67,22 +67,7 @@ class CreateKelahiranController extends Component
     {
         $this->validate();
 
-        // dd($this->validate());
-
         $code  = Warga::with(['rt', 'rw'])->findOrFail($this->id_ayah);
-        // dd($ayah->toArray());
-
-
-        // $kodeKelurahan = '10450';
-        // $rt = str_pad(optional($ayah->rt)->no_RT ?? 0, 2, '0', STR_PAD_LEFT);
-        // $rw = str_pad(optional($ayah->rw)->no_RW ?? 0, 2, '0', STR_PAD_LEFT);
-        // dd($ayah->id_RW);
-
-        // dd([
-        //     'kode_kelurahan' => $kodeKelurahan,
-        //     'rt' => $rt,
-        //     'rw' => $rw,
-        // ]);
 
         $this->nama_anak = strip_tags($this->nama_anak);
         $this->tempat_lahir = strip_tags($this->tempat_lahir);

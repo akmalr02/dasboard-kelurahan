@@ -16,12 +16,25 @@
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <!-- Tombol Kembali -->
         <div class="mb-8">
-            <a href="{{ route('kelahiran') }}"
+            <a href="{{ route('kelahiran') }}" wire:navigate
                 class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md hover:shadow-lg">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Kembali
             </a>
         </div>
+
+        <!-- Success Message -->
+        @if (session()->has('success'))
+            <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3"></i>
+                    <div>
+                        <h4 class="font-semibold text-green-800 mb-1">Berhasil!</h4>
+                        <p class="text-green-700 text-sm">{{ session('success') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <!-- Form Container -->
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
@@ -192,15 +205,9 @@
                         @enderror
                     </div>
 
-
                     <!-- Form Actions -->
                     <div class="mt-10 pt-8 border-t border-gray-200">
                         <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
-                            <button type="button"
-                                class="px-8 py-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium text-lg">
-                                <i class="fas fa-times mr-2"></i>
-                                Batal
-                            </button>
                             <button type="submit"
                                 class="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-lg">
                                 <i class="fas fa-save mr-2"></i>

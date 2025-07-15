@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Livewire\Surat;
+namespace App\Livewire\Surat\Kematian;
 
-use App\Models\SuratKelahiran;
+use App\Models\SuratKematian;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class AddKelahiranController extends Component
+class AddKematianController extends Component
 {
     protected string $layout = 'layouts.app';
 
-    public $SuratKelahiran = [];
+    public $SuratKematian = [];
     public $showModal = false;
     public $selectedSurat = null;
 
     public function mount()
     {
-        $this->SuratKelahiran = SuratKelahiran::all();
+        $this->SuratKematian = SuratKematian::all();
     }
 
     public function showDetail($id)
     {
-        $this->selectedSurat = SuratKelahiran::find($id);
+        $this->selectedSurat = SuratKematian::find($id);
         $this->showModal = true;
     }
 
@@ -40,7 +40,7 @@ class AddKelahiranController extends Component
             return;
         }
 
-        $surat = SuratKelahiran::find($id);
+        $surat = SuratKematian::find($id);
 
         if (!$surat) {
             session()->flash('error', 'Surat tidak ditemukan.');
@@ -58,10 +58,11 @@ class AddKelahiranController extends Component
 
     public function render()
     {
-        // dd($this->SuratKelahiran);
-        return view('livewire.surat.add-kelahiran', [
-            'title' => 'Pengajuan surat kelahiran',
-            'kelahirans' => $this->SuratKelahiran
+        // dd('kematian');
+
+        return view('livewire.surat.kematian.add-kematian', [
+            'title' => 'Pengajuan surat kematian',
+            'kematians' => $this->SuratKematian
         ]);
     }
 }

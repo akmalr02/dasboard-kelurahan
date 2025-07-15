@@ -327,11 +327,6 @@
                 <!-- Form Actions -->
                 <div class="mt-10 pt-8 border-t border-gray-200">
                     <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
-                        <button type="button"
-                            class="px-8 py-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium text-lg">
-                            <i class="fas fa-times mr-2"></i>
-                            Batal
-                        </button>
                         <button type="submit"
                             class="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-lg">
                             <i class="fas fa-paper-plane mr-2"></i>

@@ -166,7 +166,6 @@
                     @endif
                 </div>
 
-
                 <!-- Footer -->
                 <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-xl border-t border-gray-200">
                     <div class="flex justify-end">

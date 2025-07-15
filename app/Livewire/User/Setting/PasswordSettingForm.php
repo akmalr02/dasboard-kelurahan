@@ -18,7 +18,7 @@ class PasswordSettingForm extends Component
     public $new_password;
     public $new_password_confirmation;
     public $showPasswordModal = false;
-    public $isUpdating = false;
+    // public $isUpdating = false;
 
     protected function rules()
     {
@@ -42,27 +42,27 @@ class PasswordSettingForm extends Component
 
     public function gantiPassword()
     {
-        $this->isUpdating = true;
+        // $this->isUpdating = true;
         $this->validate();
 
         // Cek password saat ini
         if (!Hash::check($this->current_password, $this->user->password)) {
             $this->addError('current_password', 'Password saat ini tidak benar.');
-            $this->isUpdating = false;
+            // $this->isUpdating = false;
             return;
         }
 
         // Cek apakah password baru sama dengan password lama
         if (Hash::check($this->new_password, $this->user->password)) {
             $this->addError('new_password', 'Password baru tidak boleh sama dengan password lama.');
-            $this->isUpdating = false;
+            // $this->isUpdating = false;
             return;
         }
 
         $this->user->update(['password' => Hash::make($this->new_password)]);
 
         $this->reset(['current_password', 'new_password', 'new_password_confirmation', 'showPasswordModal']);
-        $this->isUpdating = false;
+        // $this->isUpdating = false;
 
         session()->flash('success', 'Password berhasil diperbarui.');
         $this->dispatch('password-updated');

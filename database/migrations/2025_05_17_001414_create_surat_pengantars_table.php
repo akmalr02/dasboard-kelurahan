@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('surat_pengantars', function (Blueprint $table) {
             $table->id('id_pengajuan');
             $table->string('nama', 225);
-            $table->unsignedBigInteger('NIK')->unique();
+            $table->unsignedBigInteger('NIK')->unique(); //hilangkan unique
             $table->unsignedBigInteger('NKK');
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('tempat_lahir', 100)->nullable();

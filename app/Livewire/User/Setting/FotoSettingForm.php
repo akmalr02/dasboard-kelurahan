@@ -16,7 +16,7 @@ class FotoSettingForm extends Component
     public User $user;
     public $foto_profil;
     public $showFotoModal = false;
-    public $isUploading = false;
+    // public $isUploading = false;
 
     protected $rules = [
         'foto_profil' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
@@ -50,7 +50,7 @@ class FotoSettingForm extends Component
         $this->user->update(['foto_profil' => $path]);
 
         $this->reset(['foto_profil', 'showFotoModal']);
-        $this->isUploading = false;
+        // $this->isUploading = false;
 
         session()->flash('success', 'Foto profil berhasil diunggah.');
         $this->dispatch('foto-uploaded');

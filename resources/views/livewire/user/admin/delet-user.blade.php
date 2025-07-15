@@ -4,8 +4,7 @@
             wire:click.self="closeModal">
             <div class="bg-white rounded-xl shadow-lg max-w-md w-full p-6" wire:click.stop>
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Konfirmasi Hapus</h2>
-                <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus user ini? Tindakan ini tidak dapat
-                    dibatalkan.</p>
+                <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus user ini?</p>
 
                 <div class="flex justify-end space-x-2">
                     <button wire:click="closeModal"
