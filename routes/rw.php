@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\User\RW\DataWargaController as WargaRwController;
-use App\Livewire\User\Rw\HistoryTtdSurat;
+use App\Livewire\User\RW\HistoryTtdSurat;
 
 Route::get('/rw/warga', WargaRwController::class)
     ->middleware(['auth'])
