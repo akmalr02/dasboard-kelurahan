@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class WargaSeeder extends Seeder
+class FakeWargaSeeder extends Seeder
 {
     public function run(): void
     {

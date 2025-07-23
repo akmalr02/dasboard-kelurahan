@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RwSeeder::class,
             RtSeeder::class,
             WargaSeeder::class,
+            FakeWargaSeeder::class,
             UserSeeder::class,
         ]);
     }

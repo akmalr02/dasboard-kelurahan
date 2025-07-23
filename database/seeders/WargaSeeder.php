@@ -4,80 +4,58 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class WargaSeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = \Faker\Factory::create('id_ID');
+        $file = storage_path('app/public/data warga.xlsx');
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray(null, true, true, true);
 
-        $totalNKK = 200;
-        $maxPerNKK = 5;
-        $batchSize = 300;
+        // Buang header
+        unset($rows[1]);
 
-        // Ambil data RT dan RW yang sesuai
-        $rtData = DB::table('rts')
-            ->join('rws', 'rts.id_RW', '=', 'rws.id_RW')
-            ->select('rts.id_RT', 'rws.id_RW')
-            ->get();
+        $data = [];
+        foreach ($rows as $row) {
+            $rt = DB::table('rts')->where('no_RT', $row['O'])->first();
+            $rw = DB::table('rws')->where('no_RW', $row['P'])->first();
 
-        $nkkList = [];
-        for ($i = 0; $i < $totalNKK; $i++) {
-            $nkkList[] = $faker->numerify('1###############');
-        }
-
-        $wargaBatch = [];
-
-        foreach ($nkkList as $nkk) {
-            $anggotaKeluarga = rand(1, $maxPerNKK);
-
-            // Ambil RT dan RW yang cocok
-            $selected = $rtData->random();
-            $id_RT = $selected->id_RT;
-            $id_RW = $selected->id_RW;
-
-            for ($j = 0; $j < $anggotaKeluarga; $j++) {
-                $isKepalaKeluarga = $j === 0;
-                $jenisKelamin = $faker->randomElement(['L', 'P']);
-                $statusPenduduk = $faker->randomElement(['hidup', 'pindah', 'meninggal']);
-
-                $wargaBatch[] = [
-                    'NIK' => $faker->unique()->numerify('1###############'),
-                    'NKK' => $nkk,
-                    'name' => $faker->name($jenisKelamin === 'L' ? 'male' : 'female'),
-                    'jenis_kelamin' => $jenisKelamin,
-                    'kewarganegaraan' => $faker->randomElement(['WNI', 'WNA']),
-                    'agama' => $faker->randomElement(['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu', 'Lainnya']),
-                    'pekerjaan' => $faker->jobTitle(),
-                    'alamat' => $faker->address(),
-                    'tempat_lahir' => $faker->city(),
-                    'tanggal_lahir' => $faker->date('Y-m-d'),
-                    'golongan_darah' => $faker->randomElement(['A', 'B', 'AB', 'O', 'tidak tahu']),
-                    'status_perkawinan' => $faker->randomElement(['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati']),
-                    'pendidikan' => $faker->randomElement(['Tidak Sekolah', 'SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3']),
-                    'status_keluarga' => $isKepalaKeluarga
-                        ? 'kepala_keluarga'
-                        : ($jenisKelamin === 'P' && $j === 1 ? 'istri' : ($j > 1 ? 'anak' : 'lainnya')),
-                    'status_penduduk' => $statusPenduduk,
-                    'tanggal_meninggal' => $statusPenduduk === 'meninggal' ? $faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d') : null,
-                    'id_RT' => $id_RT,
-                    'id_RW' => $id_RW,
-                    'role' => 'warga',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-
-                if (count($wargaBatch) >= $batchSize) {
-                    DB::table('wargas')->insert($wargaBatch);
-                    $wargaBatch = [];
-                }
+            if (!$rt || !$rw) {
+                continue; // lewati jika tidak ada RT/RW
             }
+
+            $data[] = [
+                'NIK' => $row['A'],
+                'NKK' => $row['B'],
+                'name' => $row['C'],
+                'jenis_kelamin' => $row['D'],
+                'kewarganegaraan' => $row['E'],
+                'agama' => $row['F'],
+                'pekerjaan' => $row['G'],
+                'alamat' => $row['H'],
+                'tempat_lahir' => $row['I'],
+                'tanggal_lahir' => date('Y-m-d', strtotime($row['J'])),
+                'golongan_darah' => $row['K'],
+                'status_perkawinan' => $row['L'],
+                'pendidikan' => $row['M'],
+                'status_keluarga' => $row['N'],
+                'status_penduduk' => 'hidup',
+                'tanggal_meninggal' => null,
+                'id_RT' => $rt->id_RT,
+                'id_RW' => $rw->id_RW,
+                'role' => 'warga',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
 
-        // Sisanya
-        if (!empty($wargaBatch)) {
-            DB::table('wargas')->insert($wargaBatch);
+        // Masukkan batch
+        $chunks = array_chunk($data, 300);
+        foreach ($chunks as $chunk) {
+            DB::table('wargas')->insert($chunk);
         }
     }
 }
