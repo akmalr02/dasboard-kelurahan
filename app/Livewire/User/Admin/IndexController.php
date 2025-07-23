@@ -26,11 +26,6 @@ class IndexController extends Component
 
     public function downloadData($tipe)
     {
-        // dd([
-        //     'tipe' => $tipe,
-        //     'selectedRW' => $this->selectedRW,
-        //     'selectedRT' => $this->selectedRT,
-        // ]);
         if ($tipe === 'semua') {
             return Excel::download(new WargaExport, 'seluruh data warga.xlsx');
         }
@@ -43,11 +38,9 @@ class IndexController extends Component
         }
 
         if ($tipe === 'warga_rt' && $this->selectedRT) {
-            // Debug data RT
             $rtData = RT::where('no_RT', $this->selectedRT)->first();
 
             if ($this->selectedRW) {
-                // Cari RT berdasarkan no_RT dan RW
                 $rt = RT::where('no_RT', $this->selectedRT)
                     ->where('id_RW', $this->selectedRW)
                     ->first();

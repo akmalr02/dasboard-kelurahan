@@ -44,7 +44,7 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
+                </div>                                                                             
 
                 <!-- Password -->
                 <div class="mt-4">

@@ -18,21 +18,21 @@ class PasswordSettingForm extends Component
     public $new_password;
     public $new_password_confirmation;
     public $showPasswordModal = false;
-    // public $isUpdating = false;
 
     protected function rules()
     {
         return [
             'current_password' => 'required',
-            'new_password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
+            'new_password' => ['required', 'confirmed'],
+            'new_password_confirmation' => 'required',
         ];
     }
 
     protected $messages = [
         'current_password.required' => 'Password saat ini wajib diisi.',
         'new_password.required' => 'Password baru wajib diisi.',
-        'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
-        'new_password.min' => 'Password minimal 8 karakter.',
+        'new_password.confirmed' => 'Konfirmasi password tidak cocok dengan password baru.',
+        'new_password_confirmation.required' => 'Konfirmasi password baru wajib diisi.',
     ];
 
     public function mount()
@@ -42,35 +42,89 @@ class PasswordSettingForm extends Component
 
     public function gantiPassword()
     {
-        // $this->isUpdating = true;
+        $this->resetErrorBag();
+
         $this->validate();
 
-        // Cek password saat ini
         if (!Hash::check($this->current_password, $this->user->password)) {
-            $this->addError('current_password', 'Password saat ini tidak benar.');
-            // $this->isUpdating = false;
+            $this->addError('current_password', 'Password lama tidak cocok.');
             return;
         }
 
-        // Cek apakah password baru sama dengan password lama
         if (Hash::check($this->new_password, $this->user->password)) {
-            $this->addError('new_password', 'Password baru tidak boleh sama dengan password lama.');
-            // $this->isUpdating = false;
+            $this->addError('new_password', 'Password baru harus berbeda dengan password saat ini.');
             return;
         }
 
-        $this->user->update(['password' => Hash::make($this->new_password)]);
+        if (!$this->validatePasswordRequirements($this->new_password)) {
+            return;
+        }
 
-        $this->reset(['current_password', 'new_password', 'new_password_confirmation', 'showPasswordModal']);
-        // $this->isUpdating = false;
+        try {
+            $this->user->update(['password' => Hash::make($this->new_password)]);
 
-        session()->flash('success', 'Password berhasil diperbarui.');
-        $this->dispatch('password-updated');
+            $this->reset(['current_password', 'new_password', 'new_password_confirmation', 'showPasswordModal']);
+            $this->resetErrorBag();
+
+            session()->flash('success', 'Password berhasil diperbarui.');
+            $this->dispatch('password-updated');
+        } catch (\Exception $e) {
+            $this->addError('general', 'Terjadi kesalahan saat memperbarui password. Silakan coba lagi.');
+        }
+    }
+
+    private function validatePasswordRequirements($password)
+    {
+        $errors = [];
+        $isValid = true;
+
+        foreach ($errors as $error) {
+            $this->addError('new_password', $error);
+        }
+
+        return $isValid;
     }
 
     public function closeModal()
     {
         $this->reset(['current_password', 'new_password', 'new_password_confirmation', 'showPasswordModal']);
+        $this->resetErrorBag();
+    }
+
+    public function updatedCurrentPassword()
+    {
+        if (!empty($this->current_password)) {
+            $this->resetErrorBag('current_password');
+
+            if (!Hash::check($this->current_password, $this->user->password)) {
+                $this->addError('current_password', 'Password lama tidak cocok');
+            }
+        }
+    }
+
+    public function updatedNewPassword()
+    {
+        if (!empty($this->new_password)) {
+            $this->resetErrorBag('new_password');
+
+            if (Hash::check($this->new_password, $this->user->password)) {
+                $this->addError('new_password', '❌ Password baru harus berbeda dengan password saat ini.');
+                return;
+            }
+
+            $this->validatePasswordRequirements($this->new_password);
+        }
+    }
+
+    public function updatedNewPasswordConfirmation()
+    {
+        if (!empty($this->new_password_confirmation) && !empty($this->new_password)) {
+            $this->resetErrorBag('new_password_confirmation');
+
+            if ($this->new_password !== $this->new_password_confirmation) {
+                $this->addError('new_password_confirmation', 'Konfirmasi password tidak cocok dengan password baru.');
+            }
+        }
     }
 
     public function render()

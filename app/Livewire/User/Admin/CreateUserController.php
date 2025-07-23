@@ -32,7 +32,6 @@ class CreateUserController extends Component
 
     public function loadAvailableWargas()
     {
-        // Optimasi: Ambil kolom yang diperlukan saja
         $this->availableWargas = Warga::select('id_warga', 'name', 'id_RT', 'id_RW')
             ->where('role', 'warga')
             ->where('status_penduduk', 'hidup')
@@ -68,7 +67,6 @@ class CreateUserController extends Component
             return;
         }
 
-        // Cek apakah RT/RW sudah memiliki pengelola
         if ($this->role === 'pengelola_rt') {
             $sudahAda = Warga::where('id_RT', $warga->id_RT)
                 ->where('role', 'ketua_RT')
@@ -90,7 +88,6 @@ class CreateUserController extends Component
         }
 
         try {
-            // Buat user dengan id_user = id_warga
             $user = User::create([
                 'name' => $warga->name,
                 'email' => $this->email,
@@ -101,12 +98,10 @@ class CreateUserController extends Component
                 'id_rw' => $warga->id_RW,
             ]);
 
-            // Update role warga
             $warga->update([
                 'role' => $this->role === 'pengelola_rt' ? 'ketua_RT' : 'ketua_RW',
             ]);
 
-            // Update tabel RT atau RW untuk set name
             if ($this->role === 'pengelola_rt') {
                 Rt::where('id_RT', $warga->id_RT)->update([
                     'name_RT' => $warga->name,
@@ -119,19 +114,14 @@ class CreateUserController extends Component
                 ]);
             }
 
-            // Tutup modal dan reset form
             $this->closeModal();
 
-            // Refresh available warga
             $this->loadAvailableWargas();
 
-            // KONSISTEN: Gunakan dispatch yang sama seperti controller lain
             $this->dispatch('showSuccessMessage', 'User berhasil dibuat dan jabatan warga berhasil diperbarui!');
 
-            // Refresh parent component untuk update tabel
             $this->dispatch('$refresh');
         } catch (\Exception $e) {
-            // Handle error
             $this->addError('general', 'Terjadi kesalahan saat membuat user. Silakan coba lagi.');
         }
     }

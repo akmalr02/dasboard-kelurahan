@@ -71,8 +71,8 @@
                             class="{{ request()->routeIs('rw.warga') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
                             Data Warga RW
                         </a>
-                        <div class="flex items-center gap-4 relative" x-data="{ bukaSurat: false }">
-                            <button @click="bukaSurat = !bukaSurat"
+                        <div class="flex items-center gap-4 relative" x-data="{ openSurat: false }">
+                            <button @click="openSurat = !openSurat"
                                 class="text-white hover:bg-sky-700 rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
                                 <span>Pengajuan Surat</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,11 +80,34 @@
                                         d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <div x-show="bukaSurat" @click.outside="bukaSurat = false" x-transition
+                            <div x-show="openSurat" @click.outside="openSurat = false" x-transition
                                 class="absolute top-full mt-2 bg-white w-48 rounded-md shadow-lg z-50">
                                 <a href="{{ route('add.pengantar') }}" wire:navigate
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
                                     Pengantar</a>
+                            </div>
+                        </div>
+                        {{-- pebuatan --}}
+                        <div class="flex items-center gap-4 relative" x-data="{ bukaSurat: false }">
+                            <button @click="bukaSurat = !bukaSurat"
+                                class="text-white hover:bg-sky-700 rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
+                                <span>Pembuatan Surat</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="bukaSurat" @click.outside="bukaSurat = false" x-transition
+                                class="absolute top-full mt-2 bg-white w-48 rounded-md shadow-lg z-50">
+                                <a href="{{ route('pengantar') }}" wire:navigate
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                                    Pengantar</a>
+                                <a href="{{ route('kelahiran') }}" wire:navigate
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                                    Kelahiran</a>
+                                <a href="{{ route('kematian') }}" wire:navigate
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                                    Kematian</a>
                             </div>
                         </div>
 
@@ -164,8 +187,8 @@
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
                                     Kematian</a>
                             </div>
-                            <a href="#" wire:navigate
-                                class="{{ request()->routeIs('#') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
+                            <a href="{{ route('warga.history') }}" wire:navigate
+                                class="{{ request()->routeIs('warga.history') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
                                 History
                             </a>
                         </div>
@@ -209,17 +232,19 @@
                             </a>
 
                             <a href="{{ route('logout') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Logout
+                                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <x-simpleline-logout class="w-5 h-5" />
+                                <span class="text-base font-semibold">Log out</span>
                             </a>
                         </div>
 
                     </div>
                 @else
                     <a href="{{ route('login') }}" wire:navigate
-                        class="{{ request()->routeIs('login') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
+                        class="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition 
+                        {{ request()->routeIs('login') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }}">
                         <x-simpleline-login class="w-5 h-5" />
-                        <span class="font-semibold text-base">Login</span>
+                        <span class="text-base font-semibold">Login</span>
                     </a>
                 @endif
             </div>
@@ -267,29 +292,48 @@
                     class="{{ request()->routeIs('admin.history') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
                     History
                 </a>
-                {{-- RW --}}
             @elseif (Auth::user()->role == 'pengelola_rw')
                 <a href="{{ route('rw.warga') }}" wire:navigate
                     class="{{ request()->routeIs('rw.warga') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} block rounded-md px-3 py-2 text-sm font-medium">
                     Data Warga
                 </a>
 
-                <div class="relative" x-data="{ bukaSurat: false }">
-                    <button @click="bukaSurat = !bukaSurat"
+                <div class="relative" x-data="{ openSurat: false }">
+                    <button @click="openSurat = !openSurat"
                         class="text-white hover:bg-sky-700 rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
                         <span>Pengajuan Surat</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div x-show="bukaSurat" @click.outside="bukaSurat = false" x-transition
+                    <div x-show="openSurat" @click.outside="openSurat = false" x-transition
                         class="absolute top-full mt-2 bg-white w-48 rounded-md shadow-lg z-50">
                         <a href="{{ route('add.pengantar') }}" wire:navigate
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
                             Pengantar</a>
                     </div>
                 </div>
-
+                <div class="relative" x-data="{ bukaSurat: false }">
+                    <button @click="bukaSurat = !bukaSurat"
+                        class="text-white hover:bg-sky-700 rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
+                        <span>Pembuatan Surat</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div x-show="bukaSurat" @click.outside="bukaSurat = false" x-transition
+                        class="absolute top-full mt-2 bg-white w-48 rounded-md shadow-lg z-50">
+                        <a href="{{ route('pengantar') }}" wire:navigate
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                            Pengantar</a>
+                        <a href="{{ route('kelahiran') }}" wire:navigate
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                            Kelahiran</a>
+                        <a href="{{ route('kematian') }}" wire:navigate
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
+                            Kematian</a>
+                    </div>
+                </div>
                 <a href="{{ route('rw.history') }}" wire:navigate
                     class="{{ request()->routeIs('rw.history') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} block rounded-md px-3 py-2 text-sm font-medium">
                     History
@@ -360,6 +404,10 @@
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Surat
                             Kematian</a>
                     </div>
+                    <a href="{{ route('warga.history') }}" wire:navigate
+                        class="{{ request()->routeIs('warga.history') ? 'bg-sky-600 text-white' : 'text-white hover:bg-sky-700 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
+                        History
+                    </a>
             @endif
         @else
             <a href="{{ route('welcome') }}" wire:navigate
@@ -372,7 +420,6 @@
                 Kependudukan
             </a>
         @endauth
-
 
         @if (Auth::check())
             <div x-data="{ mobileUserOpen: false }" class="relative">
@@ -391,8 +438,9 @@
                 <div x-show="mobileUserOpen" x-transition class="mt-2 bg-white rounded-md shadow-md w-full z-50">
                     <a href="{{ route('setting') }}"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Akun Saya</a>
-                    <a href="{{ route('logout') }}"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                    <a href="{{ route('logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <x-simpleline-logout class="w-5 h-5" />
+                        Logout</a>
                 </div>
             </div>
         @else

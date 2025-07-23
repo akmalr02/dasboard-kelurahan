@@ -30,13 +30,14 @@ class SuratPengantar extends Model
         'email',
         'status',
         'tanggal_pengajuan',
+        'foto_ktp',
+        'file_pdf',
         'id_rt',
         'id_rw',
         'file_ttd_rt',
         'file_ttd_rw',
         'kode_verifikasi',
     ];
-    // Relasi ke user (pelapor)
     public function pelapor()
     {
         return $this->belongsTo(User::class, 'id_pengantar', 'id_user');
@@ -47,7 +48,6 @@ class SuratPengantar extends Model
         return $this->belongsTo(Warga::class, 'id_pengantar', 'id_warga');
     }
 
-    // Opsional: Relasi ke RT & RW
     public function rt()
     {
         return $this->belongsTo(RT::class, 'id_rt');

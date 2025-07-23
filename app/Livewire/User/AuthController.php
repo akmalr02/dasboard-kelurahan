@@ -39,10 +39,6 @@ class AuthController extends Component
 
     public function login()
     {
-        // logger('Form login dipanggil');
-
-        // dd($this->email, $this->password, $this->remember);
-
         $this->validate();
 
         $this->email = strip_tags($this->email);
@@ -61,10 +57,7 @@ class AuthController extends Component
 
         $user = Auth::user();
 
-        // logger('Login berhasil sebagai ' . $user->name);
-
         session()->flash('message', 'Login berhasil sebagai: ' . $user->name . ' (' . $user->role . ')');
-        // dd('Login berhasil sebagai', Auth::user());
 
         $redirectUrl = match ($user->role) {
             'admin'         => route('admin.dashboard'),
@@ -74,13 +67,11 @@ class AuthController extends Component
             default => route('login'),
         };
 
-        // dd($redirectUrl);
         return redirect()->to($redirectUrl);
     }
 
     public function logout()
     {
-        // dd('berhasil');
         $user = Auth::user();
 
         if ($user) {

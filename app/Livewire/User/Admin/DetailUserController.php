@@ -16,8 +16,6 @@ class DetailUserController extends Component
     {
         $this->user = User::findOrFail($id_user);
         $this->show = true;
-
-        // dd($this->user);
     }
 
     public function closeModal()

@@ -53,13 +53,11 @@ class AddKematianController extends Component
         ]);
 
         session()->flash('success', 'Tanda tangan berhasil ditambahkan.');
-        $this->mount(); // Refresh data
+        $this->mount();
     }
 
     public function render()
     {
-        // dd('kematian');
-
         return view('livewire.surat.kematian.add-kematian', [
             'title' => 'Pengajuan surat kematian',
             'kematians' => $this->SuratKematian

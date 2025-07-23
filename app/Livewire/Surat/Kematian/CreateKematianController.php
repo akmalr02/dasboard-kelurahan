@@ -26,8 +26,8 @@ class CreateKematianController extends Component
         'hari_meninggal' => 'required|string|max:20',
         'tanggal_meninggal' => 'required|date',
         'jam_meninggal' => 'required|date_format:H:i',
-        'penyebab' => 'nullable|string|max:255',
-        'tempat_pemakaman' => 'nullable|string|max:255',
+        'penyebab' => 'required|string|max:255',
+        'tempat_pemakaman' => 'required|string|max:255',
     ];
 
     protected $messages = [
@@ -41,9 +41,11 @@ class CreateKematianController extends Component
         'tanggal_meninggal.required' => 'Tanggal meninggal wajib diisi.',
         'jam_meninggal.required' => 'Jam meninggal wajib diisi.',
         'penyebab.max' => 'Penyebab maksimal 255 karakter.',
+        'penyebab.required' => 'Penyebab wajib diisi.',
         'penyebab.not_regex' => 'Input penyebab mengandung tag yang tidak diizinkan.',
         'tempat_pemakaman.max' => 'Tempat pemakaman maksimal 255 karakter.',
         'tempat_pemakaman.not_regex' => 'Input tempat pemakaman mengandung tag yang tidak diizinkan.',
+        'tempat_pemakaman.required' => 'tempat pemakaman wajib diisi.',
     ];
 
 
@@ -54,8 +56,6 @@ class CreateKematianController extends Component
         if (!$user->warga) {
             abort(403, 'Anda tidak terdaftar sebagai warga.');
         }
-
-        // dd($user);
     }
 
     public function render()
@@ -66,8 +66,6 @@ class CreateKematianController extends Component
     public function create()
     {
         $this->validate();
-
-        // dd($this->validate());
 
         $user = Auth::user();
         $warga = $user->warga;

@@ -28,7 +28,6 @@ class HistoryTtdSurat extends Component
 
     public function showDetail($id)
     {
-        // dd('berhasil');
         $surat = SuratPengantar::with(['pelapor.rw', 'pelapor.rt'])->findOrFail($id);
         $suratArray = $surat->toArray();
         $this->dispatch('showModalSurat', $suratArray);
@@ -49,8 +48,6 @@ class HistoryTtdSurat extends Component
             })
             ->orderByDesc('tanggal_pengajuan')
             ->paginate(10);
-
-        // dd($surats);
 
         return view('livewire.user.r-t.history-ttd-surat', [
             'title' => 'History surat RT',

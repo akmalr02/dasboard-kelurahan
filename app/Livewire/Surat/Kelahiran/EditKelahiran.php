@@ -12,7 +12,7 @@ class EditKelahiran extends Component
     public $isOpen = false;
     public $suratId;
 
-    public $nama_anak, $jenis_kelamin, $tempat_lahir, $tanggal_lahir, $hari_lahir;
+    public $nama_anak, $anak_ke, $jenis_kelamin, $tempat_lahir, $tanggal_lahir, $hari_lahir;
     public $id_ibu, $id_ayah;
 
     public $isLoadingModal = false;
@@ -24,6 +24,7 @@ class EditKelahiran extends Component
     {
         return [
             'nama_anak' => 'required|string|max:225',
+            'anak_ke' => 'required|string|max:225',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -36,6 +37,8 @@ class EditKelahiran extends Component
     protected $messages = [
         'nama_anak.required' => 'Nama anak wajib diisi.',
         'nama_anak.max' => 'Nama anak maksimal 225 karakter.',
+        'anak_ke.required' => 'Nama anak wajib diisi.',
+        'anak_ke.max' => 'Nama anak maksimal 225 karakter.',
         'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
         'jenis_kelamin.in' => 'Jenis kelamin tidak valid.',
         'tempat_lahir.required' => 'Tempat lahir wajib diisi.',
@@ -68,6 +71,7 @@ class EditKelahiran extends Component
 
         $this->fill([
             'nama_anak' => $surat->nama_anak,
+            'anak_ke' => $surat->anak_ke,
             'jenis_kelamin' => $surat->jenis_kelamin,
             'tempat_lahir' => $surat->tempat_lahir,
             'tanggal_lahir' => $surat->tanggal_lahir,
@@ -85,6 +89,7 @@ class EditKelahiran extends Component
         $this->reset([
             'suratId',
             'nama_anak',
+            'anak_ke',
             'jenis_kelamin',
             'tempat_lahir',
             'tanggal_lahir',
@@ -103,6 +108,7 @@ class EditKelahiran extends Component
 
         $surat->update([
             'nama_anak' => $this->nama_anak,
+            'anak_ke' => $this->anak_ke,
             'jenis_kelamin' => $this->jenis_kelamin,
             'tempat_lahir' => $this->tempat_lahir,
             'tanggal_lahir' => $this->tanggal_lahir,

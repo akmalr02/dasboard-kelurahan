@@ -34,12 +34,6 @@ class DataWargaController extends Component
 
     public function downloadData($tipe)
     {
-        // dd([
-        //     'tipe' => $tipe,
-        //     'selectedRT' => $this->selectedRT,
-        //     'user_id_rw' => Auth::user()->id_rw,
-        // ]);
-
         $user = Auth::user();
 
         if ($tipe === 'semua') {

@@ -4,6 +4,8 @@ namespace App\Livewire\Surat\Kelahiran;
 
 use Livewire\Component;
 use App\Models\SuratKelahiran;
+use Illuminate\Routing\Route;
+use Symfony\Component\Routing\Router;
 
 class DeletKelahiran extends Component
 {
@@ -31,6 +33,7 @@ class DeletKelahiran extends Component
 
     public function closeModal()
     {
+        // dd('Modal ditutup');
         $this->isOpen = false;
         $this->suratId = null;
         $this->suratData = [];
@@ -40,11 +43,16 @@ class DeletKelahiran extends Component
     {
         try {
             $surat = SuratKelahiran::findOrFail($this->suratId);
+            // dd($surat);
             $surat->delete();
 
             $this->closeModal();
-            $this->dispatch('kelahiranDeleted');
+            // $this->dispatch('kelahiranDeleted');
+            // Kirim pesan sukses ke frontend
             $this->dispatch('showSuccessMessage', 'Surat kelahiran berhasil dihapus.');
+
+            // Redirect ke route 'kelahiran'
+            return redirect()->route('kelahiran');
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi kesalahan saat menghapus surat kematian.');
         }

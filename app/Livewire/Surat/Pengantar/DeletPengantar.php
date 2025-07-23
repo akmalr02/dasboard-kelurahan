@@ -40,7 +40,6 @@ class DeletPengantar extends Component
             $surat = SuratPengantar::findOrFail($this->suratId);
             $surat->delete();
 
-            // session()->flash('success', 'Surat pengantar berhasil dihapus.');
             $this->closeModal();
             $this->dispatch('pengantarDeleted');
             $this->dispatch('showSuccessMessage', 'Surat pengantar berhasil dihapus.');

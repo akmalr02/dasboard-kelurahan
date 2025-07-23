@@ -14,10 +14,6 @@
                 <div
                     class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
                     <div class="flex items-start gap-4">
-                        <img class="w-16 h-16 rounded-full object-cover border-2 border-gray-100"
-                            src="{{ $k->foto_profil ? asset('storage/' . $k->foto_profil) : asset('img/user.jpg') }}"
-                            alt="foto_profil {{ $k->name }}">
-
                         <div class="flex-1">
                             <h3 class="text-lg font-semibold text-gray-900 truncate">{{ $k->name }}</h3>
 
@@ -56,7 +52,7 @@
                         <!-- Header -->
                         <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl">
                             <div class="flex items-center justify-between">
-                                <h2 class="text-2xl font-bold text-gray-900">Detail Warga</h2>
+                                <h2 class="text-2xl font-bold text-gray-900">Detail Keluarga</h2>
                                 <button wire:click="closeModal"
                                     class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

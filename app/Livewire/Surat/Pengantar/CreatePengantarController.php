@@ -6,9 +6,14 @@ use App\Models\Warga;
 use Livewire\Component;
 use App\Models\SuratPengantar;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CreatePengantarController extends Component
 {
+    use WithFileUploads;
+
     protected string $layout = 'layouts.app';
 
     public string $nama = '';
@@ -24,21 +29,25 @@ class CreatePengantarController extends Component
     public string $alamat = '';
     public string $keperluan = '';
     public string $email = '';
+    public $foto_ktp;
+    public $file_pdf;
 
     protected array $rules = [
         'nama' => 'required|string|max:225',
         'NIK' => 'required|numeric|digits_between:8,20',
         'NKK' => 'required|numeric|digits_between:8,20',
         'jenis_kelamin' => 'required|in:L,P',
-        'tempat_lahir' => 'nullable|string|max:100',
-        'tanggal_lahir' => 'nullable|date',
+        'tempat_lahir' => 'required|string|max:100',
+        'tanggal_lahir' => 'required|date',
         'status_perkawinan' => 'required|in:Kawin,Belum Kawin,Cerai Hidup,Cerai Mati',
         'kewarganegaraan' => 'required|in:WNI,WNA',
         'agama' => 'required|in:Islam,Kristen Protestan,Katolik,Hindu,Buddha,Konghucu,Lainnya',
-        'pekerjaan' => 'nullable|string|max:100',
-        'alamat' => 'nullable|string|max:225',
-        'keperluan' => 'required|string|not_regex:/<script\b[^>]*>(.*?)<\/script>/i',
+        'pekerjaan' => 'required|string|max:100',
+        'alamat' => 'required|string|max:225',
+        'keperluan' => 'required|string|min:10|max:500|not_regex:/<script\b[^>]*>(.*?)<\/script>/i',
         'email' => 'required|email|max:225',
+        'foto_ktp' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+        'file_pdf' => 'nullable|file|mimes:pdf|max:5120',
     ];
 
     protected array $messages = [
@@ -52,7 +61,9 @@ class CreatePengantarController extends Component
         'NKK.digits_between' => 'NKK harus antara 8 sampai 20 digit.',
         'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
         'jenis_kelamin.in' => 'Jenis kelamin tidak valid.',
+        'tempat_lahir.required' => 'Tempat lahir wajib diisi.',
         'tempat_lahir.max' => 'Tempat lahir tidak boleh lebih dari 100 karakter.',
+        'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
         'tanggal_lahir.date' => 'Tanggal lahir tidak valid.',
         'status_perkawinan.required' => 'Status perkawinan wajib dipilih.',
         'status_perkawinan.in' => 'Status perkawinan tidak valid.',
@@ -60,15 +71,25 @@ class CreatePengantarController extends Component
         'kewarganegaraan.in' => 'Kewarganegaraan tidak valid.',
         'agama.required' => 'Agama wajib dipilih.',
         'agama.in' => 'Agama tidak valid.',
+        'pekerjaan.required' => 'Pekerjaan wajib diisi.',
         'pekerjaan.max' => 'Pekerjaan tidak boleh lebih dari 100 karakter.',
+        'alamat.required' => 'Alamat wajib diisi.',
         'alamat.max' => 'Alamat tidak boleh lebih dari 225 karakter.',
         'keperluan.required' => 'Keperluan wajib diisi.',
+        'keperluan.min' => 'Keperluan minimal 10 karakter.',
+        'keperluan.max' => 'Keperluan maksimal 500 karakter.',
         'keperluan.not_regex' => 'Input keperluan mengandung tag yang tidak diizinkan.',
         'email.required' => 'Email wajib diisi.',
         'email.email' => 'Format email tidak valid.',
         'email.max' => 'Email tidak boleh lebih dari 225 karakter.',
+        'foto_ktp.required' => 'Foto KTP wajib diupload.',
+        'foto_ktp.image' => 'File harus berupa gambar.',
+        'foto_ktp.mimes' => 'Format foto KTP harus JPG, JPEG, atau PNG.',
+        'foto_ktp.max' => 'Ukuran foto KTP maksimal 2MB.',
+        'file_pdf.file' => 'File harus berupa file yang valid.',
+        'file_pdf.mimes' => 'File harus berformat PDF.',
+        'file_pdf.max' => 'Ukuran file PDF maksimal 5MB.',
     ];
-
 
     public function mount()
     {
@@ -78,35 +99,34 @@ class CreatePengantarController extends Component
         $this->NKK = $warga->NKK ?? '';
     }
 
+    public function updatedFotoKtp()
+    {
+        if ($this->foto_ktp) {
+            $this->validateOnly('foto_ktp');
+        }
+    }
+
+    public function updatedFilePdf()
+    {
+        if ($this->file_pdf) {
+            $this->validateOnly('file_pdf');
+        }
+    }
 
     public function create()
     {
         $this->validate();
 
         $this->keperluan = strip_tags($this->keperluan);
-
         $warga = Auth::user()->warga;
-        // dd([
-        //     'id_pengantar' => Auth::user()->id_user,
-        //     'nama' => $this->nama,
-        //     'NIK' => $this->NIK,
-        //     'NKK' => $this->NKK,
-        //     'jenis_kelamin' => $this->jenis_kelamin,
-        //     'tempat_lahir' => $this->tempat_lahir,
-        //     'tanggal_lahir' => $this->tanggal_lahir,
-        //     'status_perkawinan' => $this->status_perkawinan,
-        //     'kewarganegaraan' => $this->kewarganegaraan,
-        //     'agama' => $this->agama,
-        //     'pekerjaan' => $this->pekerjaan,
-        //     'alamat' => $this->alamat,
-        //     'keperluan' => $this->keperluan,
-        //     'email' => $this->email,
-        //     'status' => 'diproses',
-        //     'tanggal_pengajuan' => now(),
-        //     'id_rt' => Auth::user()->warga->id_RT ?? null,
-        //     'id_rw' => Auth::user()->warga->id_RW ?? null,
-        //     'kode_verifikasi' => $this->generateKodeVerifikasi($warga),
-        // ]);
+
+        $fotoKtpPath = $this->foto_ktp
+            ? $this->foto_ktp->store('surat-pengantar/foto-ktp', 'public')
+            : null;
+
+        $filePdfPath = $this->file_pdf
+            ? $this->file_pdf->store('surat-pengantar/file-pdf', 'public')
+            : null;
 
         SuratPengantar::create([
             'id_pengantar' => Auth::user()->id_user,
@@ -123,10 +143,12 @@ class CreatePengantarController extends Component
             'alamat' => $this->alamat,
             'keperluan' => $this->keperluan,
             'email' => $this->email,
+            'foto_ktp' => $fotoKtpPath,
+            'file_pdf' => $filePdfPath,
             'status' => 'diproses',
             'tanggal_pengajuan' => now(),
-            'id_rt' => Auth::user()->warga->id_RT ?? null,
-            'id_rw' => Auth::user()->warga->id_RW ?? null,
+            'id_rt' => $warga->id_RT ?? null,
+            'id_rw' => $warga->id_RW ?? null,
             'kode_verifikasi' => $this->generateKodeVerifikasi($warga),
         ]);
 

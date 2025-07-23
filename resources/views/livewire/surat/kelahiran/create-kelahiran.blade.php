@@ -74,6 +74,22 @@
                         @enderror
                     </div>
 
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">
+                            <i class="fas fa-user text-blue-500 mr-2"></i>
+                            Nama Ke- <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" inputmode="numeric" wire:model="anak_ke"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                            placeholder="Anak Ke-">
+                        @error('anak_ke')
+                            <div class="flex items-center mt-1 text-red-600 text-sm">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
                     <!-- Jenis Kelamin -->
                     <div class="space-y-2">
                         <label class="block text-sm font-semibold text-gray-700">

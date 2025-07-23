@@ -14,6 +14,7 @@ class SuratKelahiran extends Model
 
     protected $fillable = [
         'nama_anak',
+        'anak_ke',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
@@ -25,7 +26,6 @@ class SuratKelahiran extends Model
         'kode_verifikasi',
     ];
 
-    // Relasi ke warga
     public function ibu()
     {
         return $this->belongsTo(Warga::class, 'id_ibu', 'id_warga');

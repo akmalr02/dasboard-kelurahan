@@ -11,7 +11,7 @@ class CreateKelahiranController extends Component
 {
     protected string $layout = 'layouts.app';
 
-    public $nama_anak, $jenis_kelamin, $tempat_lahir, $tanggal_lahir, $hari_lahir;
+    public $nama_anak, $jenis_kelamin, $tempat_lahir, $tanggal_lahir, $hari_lahir, $anak_ke;
     public $id_ibu, $id_ayah;
     public $anggotaKeluarga = [];
 
@@ -19,6 +19,7 @@ class CreateKelahiranController extends Component
     {
         return [
             'nama_anak' => 'required|string|max:225',
+            'anak_ke' => 'required|string|max:225',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -31,6 +32,8 @@ class CreateKelahiranController extends Component
     protected $messages = [
         'nama_anak.required' => 'Nama anak wajib diisi.',
         'nama_anak.max' => 'Nama anak maksimal 225 karakter.',
+        'anak_ke.required' => 'Nama anak wajib diisi.',
+        'anak_ke.max' => 'Nama anak maksimal 225 karakter.',
         'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
         'jenis_kelamin.in' => 'Jenis kelamin tidak valid.',
         'tempat_lahir.required' => 'Tempat lahir wajib diisi.',
@@ -53,7 +56,6 @@ class CreateKelahiranController extends Component
                 ->where('status_penduduk', 'hidup')
                 ->get();
         }
-        // dd('angota keluarga', $this->anggotaKeluarga);
     }
 
     public function render()
@@ -74,6 +76,7 @@ class CreateKelahiranController extends Component
 
         SuratKelahiran::create([
             'nama_anak' => $this->nama_anak,
+            'anak_ke' => $this->anak_ke,
             'jenis_kelamin' => $this->jenis_kelamin,
             'tempat_lahir' => $this->tempat_lahir,
             'tanggal_lahir' => $this->tanggal_lahir,

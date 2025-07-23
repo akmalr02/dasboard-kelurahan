@@ -23,23 +23,17 @@ return new class extends Migration
             $table->string('alamat', 225)->nullable();
             $table->string('tempat_lahir', 100)->nullable();
             $table->date('tanggal_lahir')->nullable();
-            $table->string('foto_profil', 255)->nullable();
             $table->enum('golongan_darah', ['A', 'B', 'AB', 'O', 'tidak tahu'])->default('tidak tahu');
             $table->enum('status_perkawinan', ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati']);
             $table->enum('pendidikan', ['Tidak Sekolah', 'SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3'])->nullable();
             $table->enum('status_keluarga', ['kepala_keluarga', 'istri', 'anak', 'lainnya'])->default('lainnya');
             $table->enum('status_penduduk', ['hidup', 'pindah', 'meninggal'])->default('hidup');
             $table->date('tanggal_meninggal')->nullable();
-
             $table->unsignedBigInteger('id_RT')->nullable();
             $table->unsignedBigInteger('id_RW')->nullable();
-
             $table->enum('role', ['admin', 'warga', 'ketua_RT', 'ketua_RW'])->default('warga');
-
-            // Foreign keys
             $table->foreign('id_RT')->references('id_RT')->on('rts')->nullOnDelete();
             $table->foreign('id_RW')->references('id_RW')->on('rws')->nullOnDelete();
-
             $table->timestamps();
         });
     }

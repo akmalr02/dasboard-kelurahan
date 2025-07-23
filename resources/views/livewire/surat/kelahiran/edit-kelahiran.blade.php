@@ -45,6 +45,16 @@
                     @enderror
                 </div>
 
+                <!-- Anak ke -->
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Anak ke-</label>
+                    <input type="text" inputmode="numeric" wire:model.defer="anak_ke" placeholder="Masukkan anak ke"
+                        class="w-full px-4 py-2 border rounded-lg @error('anak_ke') border-red-500 @enderror">
+                    @error('anak_ke')
+                        <span class="text-sm text-red-500">{{ $message }}</span>
+                    @enderror
+                </div>
+
                 <!-- Jenis Kelamin -->
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-700">Jenis Kelamin</label>

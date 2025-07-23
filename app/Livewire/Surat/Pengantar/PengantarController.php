@@ -38,8 +38,6 @@ class PengantarController extends Component
             ->where('id_pengantar', Auth::user()->id_user)
             ->orderBy('created_at', 'desc')
             ->get();
-
-        // dd($this->pengantars);
     }
 
     public function showDetail($id)
@@ -59,7 +57,6 @@ class PengantarController extends Component
     public function showDelete($id)
     {
         $surat = SuratPengantar::findOrFail($id);
-        // dd($surat);
 
         $suratArray = $surat->toArray();
         $this->dispatch('deletPengantar', $suratArray);
@@ -72,10 +69,6 @@ class PengantarController extends Component
     }
     public function render()
     {
-        // $pengantars = SuratPengantar::where('id_pengantar', Auth::user()->id_user)
-        //     ->orderByDesc('tanggal_pengajuan')
-        //     ->get();
-
         return view('livewire.surat.pengantar.pengantar', [
             'title' => 'Pengajuan Surat Pengantar',
             'pengantars' => $this->pengantars,

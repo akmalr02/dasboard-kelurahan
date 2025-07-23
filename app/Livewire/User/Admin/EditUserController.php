@@ -18,20 +18,18 @@ class EditUserController extends Component
 
     public function editUser($id_user)
     {
-        // Optimasi: Set userId dulu, baru load data ketika modal sudah terbuka
         $this->userId = $id_user;
         $this->show = true;
-
-        // Defer data loading menggunakan dispatch
+        $this->loadUserData();
         $this->dispatch('loadUserData');
     }
 
     public function loadUserData()
     {
         if ($this->userId) {
-            // Optimasi: Gunakan select untuk ambil kolom yang diperlukan saja
             $this->user = User::select('id_user', 'name', 'email', 'role')
-                ->find($this->userId);
+                ->where('id_user', $this->userId)
+                ->first();
 
             if ($this->user) {
                 $this->name = $this->user->name;
@@ -54,7 +52,6 @@ class EditUserController extends Component
             'role' => 'required|in:admin,pengelola_rw,pengelola_rt,warga',
         ]);
 
-        // Optimasi: Langsung update tanpa find lagi
         User::where('id_user', $this->userId)->update([
             'name' => $this->name,
             'email' => $this->email,

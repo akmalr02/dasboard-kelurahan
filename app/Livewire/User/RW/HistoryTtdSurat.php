@@ -27,7 +27,6 @@ class HistoryTtdSurat extends Component
     }
     public function showDetail($id)
     {
-        // dd('berhasil');
         $surat = SuratPengantar::with(['pelapor.rw', 'pelapor.rt'])->findOrFail($id);
         $suratArray = $surat->toArray();
         $this->dispatch('showModalSurat', $suratArray);
@@ -38,7 +37,6 @@ class HistoryTtdSurat extends Component
         $user = Auth::user();
 
         $surats = SuratPengantar::with('rt', 'rw')
-            // ->when($user->role === 'pengelola_rt', fn($q) => $q->where('id_rt', $user->id_rt)->whereNotNull('file_ttd_rt'))
             ->when($user->role === 'pengelola_rw', fn($q) => $q->where('id_rw', $user->id_rw)->whereNotNull('file_ttd_rw'))
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {

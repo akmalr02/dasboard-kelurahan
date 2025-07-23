@@ -40,7 +40,6 @@ class KelahiranController extends Component
 
     public function showEdit($id)
     {
-        // dd('berhasil');
         $surat = $this->selectedSurat = SuratKelahiran::with(['ayah.rt.rw', 'ibu'])->findOrFail($id);
         if ($surat->id_ayah !== (Auth::user()->warga->id_warga ?? null)) {
             abort(403, 'Anda tidak berhak melihat data ini');
@@ -51,7 +50,6 @@ class KelahiranController extends Component
 
     public function showDelete($id)
     {
-        // dd('berhasil');
         $surat = $this->selectedSurat = SuratKelahiran::with(['ayah.rt.rw', 'ibu'])->findOrFail($id);
         if ($surat->id_ayah !== (Auth::user()->warga->id_warga ?? null)) {
             abort(403, 'Anda tidak berhak melihat data ini');

@@ -15,35 +15,32 @@ class HistoriSurat extends Component
     protected string $layout = 'layouts.app';
     protected $paginationTheme = 'tailwind';
 
-    public $jenis = 'pengantar'; // default
+    public $jenis = 'pengantar';
     public $search = '';
     public $showDetailModal = false;
     public $selectedSurat = null;
 
-    // Method untuk clear search
     public function clearSearch()
     {
         $this->search = '';
-        $this->resetPage(); // Reset pagination ketika search dibersihkan
+        $this->resetPage();
     }
 
-    // Method untuk update search dan reset pagination
     public function updatedSearch()
     {
-        $this->resetPage(); // Reset ke halaman 1 ketika search berubah
+        $this->resetPage();
     }
 
-    // Method untuk ganti jenis surat
     public function updatedJenis()
     {
-        $this->search = ''; // Reset search ketika ganti jenis
-        $this->resetPage(); // Reset pagination ketika ganti jenis
+        $this->search = '';
+        $this->resetPage();
     }
 
     public function showDetail($id)
     {
         if ($this->jenis === 'pengantar') {
-            $this->selectedSurat = SuratPengantar::where('id_pengantar', $id)->first();
+            $this->selectedSurat = SuratPengantar::where('id_pengajuan', $id)->first();
         } elseif ($this->jenis === 'kelahiran') {
             $this->selectedSurat = SuratKelahiran::where('id_kelahiran', $id)->first();
         } elseif ($this->jenis === 'kematian') {
@@ -53,10 +50,10 @@ class HistoriSurat extends Component
         if ($this->selectedSurat) {
             $this->showDetailModal = true;
         }
+
+        dd($this->selectedSurat);
     }
 
-
-    // Method untuk menutup modal detail
     public function closeDetailModal()
     {
         $this->showDetailModal = false;
@@ -65,7 +62,7 @@ class HistoriSurat extends Component
 
     public function render()
     {
-        $data = collect(); // Default empty collection
+        $data = collect();
 
         if ($this->jenis === 'pengantar') {
             $data = SuratPengantar::query()
@@ -81,6 +78,7 @@ class HistoriSurat extends Component
         } elseif ($this->jenis === 'kelahiran') {
             $data = SuratKelahiran::query()
                 ->whereNotNull('file_ttd_admin')
+                ->with(['ayah', 'ibu'])
                 ->when(
                     $this->search,
                     fn($q) => $q->where('nama_anak', 'like', '%' . $this->search . '%')
@@ -97,7 +95,6 @@ class HistoriSurat extends Component
                 ->latest()
                 ->paginate(10);
         }
-
         return view('livewire.user.admin.histori-surat', [
             'title' => 'Halaman History Surat',
             'surats' => $data

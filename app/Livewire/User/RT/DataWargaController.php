@@ -37,10 +37,6 @@ class DataWargaController extends Component
 
     public function downloadDataRT()
     {
-        // dd([
-        //     'user_id_rt' => Auth::user()->id_rt,
-        // ]);
-
         $user = Auth::user();
 
         return Excel::download(
@@ -57,14 +53,6 @@ class DataWargaController extends Component
             ->where('id_RW', $user->id_rw)
             ->first();
 
-        // dd([
-        //     'User yang login' => [
-        //         'id_user' => $user->id_user,
-        //         'id_rt' => $user->id_rt,
-        //         'id_rw' => $user->id_rw,
-        //     ],
-        //     'Sample Warga' => optional($sampleWarga)->only(['id_warga', 'name', 'id_RT', 'id_RW']),
-        // ]);
         $query = Warga::query()
             ->where('id_RT', $user->id_rt)
             ->where(function ($q) {
@@ -76,11 +64,6 @@ class DataWargaController extends Component
         $noRW = $user->rw->no_RW ?? 'RW Tidak Diketahui';
         $noRT = $user->rt->no_RT ?? 'RW Tidak Diketahui';
 
-        // dd(Auth::user());
-        // dd(Warga::first());
-
-        // $wargas = Warga::where('id_RT', $user->id_rt)->get();
-        // dd('berhasil');
         return view('livewire.user.r-t.data-warga', [
             'title' => 'Data Warga RW ' . $noRW . '/' . 'RT ' . $noRT,
             'wargas' => $query

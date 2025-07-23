@@ -38,7 +38,6 @@ class IndexController extends Component
                 ->get();
         }
 
-        // dd($data);
         return view('livewire.user.r-t.index', [
             'title' => 'Data Keluarga',
             'keluarga' => $data

@@ -47,7 +47,7 @@
                 <p class="text-gray-600 text-sm mt-1">Silakan lengkapi data diri Anda dengan benar</p>
             </div>
 
-            <form wire:submit.prevent="create" class="p-8">
+            <form wire:submit.prevent="create" class="p-8" enctype="multipart/form-data">
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
 
                     <!-- Data Identitas Section -->
@@ -65,7 +65,7 @@
                         </label>
                         <input type="text" wire:model="nama"
                             class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="Masukkan nama lengkap">
+                            placeholder="Masukkan nama lengkap" maxlength="225">
                         @error('nama')
                             <div class="flex items-center mt-1 text-red-600 text-sm">
                                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -80,9 +80,10 @@
                             <i class="fas fa-id-badge text-blue-500 mr-2"></i>
                             NIK <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" wire:model="NIK"
+                        <input type="number" wire:model="NIK"
                             class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="Nomor Induk Kependudukan">
+                            placeholder="Nomor Induk Kependudukan (16 digit)" min="1000000000000000"
+                            max="9999999999999999">
                         <small class="text-gray-500 text-xs">Diambil otomatis dari akun Anda, bisa diubah jika
                             perlu</small>
                         @error('NIK')
@@ -99,9 +100,9 @@
                             <i class="fas fa-users text-blue-500 mr-2"></i>
                             NKK <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" wire:model="NKK"
+                        <input type="number" wire:model="NKK"
                             class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="Nomor Kartu Keluarga">
+                            placeholder="Nomor Kartu Keluarga (16 digit)" min="1000000000000000" max="9999999999999999">
                         <small class="text-gray-500 text-xs">Diambil otomatis dari akun Anda, bisa diubah jika
                             perlu</small>
                         @error('NKK')
@@ -140,7 +141,7 @@
                         </label>
                         <input type="text" wire:model="tempat_lahir"
                             class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="Kota/Kabupaten tempat lahir">
+                            placeholder="Kota/Kabupaten tempat lahir" maxlength="100">
                         @error('tempat_lahir')
                             <div class="flex items-center mt-1 text-red-600 text-sm">
                                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -247,7 +248,7 @@
                         </label>
                         <input type="text" wire:model="pekerjaan"
                             class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                            placeholder="Profesi/pekerjaan saat ini">
+                            placeholder="Profesi/pekerjaan saat ini" maxlength="100">
                         @error('pekerjaan')
                             <div class="flex items-center mt-1 text-red-600 text-sm">
                                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -257,14 +258,14 @@
                     </div>
 
                     <!-- Alamat -->
-                    <div class="space-y-2">
+                    <div class="xl:col-span-2 space-y-2">
                         <label class="block text-sm font-semibold text-gray-700">
                             <i class="fas fa-home text-green-500 mr-2"></i>
                             Alamat <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" wire:model="alamat"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                            placeholder="Alamat lengkap tempat tinggal">
+                        <textarea wire:model="alamat" rows="3"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 resize-none"
+                            placeholder="Alamat lengkap tempat tinggal" maxlength="225"></textarea>
                         @error('alamat')
                             <div class="flex items-center mt-1 text-red-600 text-sm">
                                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -273,11 +274,70 @@
                         @enderror
                     </div>
 
-                    <!-- Keperluan Section -->
-                    <div class="xl:col-span-3 mt-10">
-                        <div class="border-l-4 border-purple-500 pl-4 mb-8">
-                            <h3 class="text-lg font-semibold text-gray-700">Keperluan Surat</h3>
+                    <!-- Foto KTP -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">
+                            <i class="fas fa-id-card text-red-500 mr-2"></i>
+                            Foto KTP <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" wire:model="foto_ktp" accept="image/*"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200">
+
+                        <!-- Loading indicator -->
+                        <div wire:loading wire:target="foto_ktp" class="text-blue-500 text-sm">
+                            <i class="fas fa-spinner fa-spin mr-1"></i>
+                            Mengupload foto KTP...
                         </div>
+
+                        <!-- Preview ketika berhasil upload -->
+                        @if ($foto_ktp)
+                            <div class="text-green-600 text-sm">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                File berhasil dipilih: {{ $foto_ktp->getClientOriginalName() }}
+                            </div>
+                        @endif
+
+                        <small class="text-gray-500 text-xs">Upload foto KTP yang jelas dan dapat dibaca. Format: JPG,
+                            PNG, JPEG. Maksimal 2MB</small>
+                        @error('foto_ktp')
+                            <div class="flex items-center mt-1 text-red-600 text-sm">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <!-- File PDF Pendukung -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">
+                            <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                            File PDF Pendukung <span class="text-gray-500">(Opsional)</span>
+                        </label>
+                        <input type="file" wire:model="file_pdf" accept=".pdf"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200">
+
+                        <!-- Loading indicator -->
+                        <div wire:loading wire:target="file_pdf" class="text-blue-500 text-sm">
+                            <i class="fas fa-spinner fa-spin mr-1"></i>
+                            Mengupload file PDF...
+                        </div>
+
+                        <!-- Preview ketika berhasil upload -->
+                        @if ($file_pdf)
+                            <div class="text-green-600 text-sm">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                File berhasil dipilih: {{ $file_pdf->getClientOriginalName() }}
+                            </div>
+                        @endif
+
+                        <small class="text-gray-500 text-xs">Upload dokumen pendukung dalam format PDF. Maksimal
+                            5MB</small>
+                        @error('file_pdf')
+                            <div class="flex items-center mt-1 text-red-600 text-sm">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Keperluan -->
@@ -288,7 +348,7 @@
                         </label>
                         <textarea wire:model="keperluan" rows="4"
                             class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
-                            placeholder="Jelaskan dengan detail keperluan pembuatan surat pengantar ini..."></textarea>
+                            placeholder="Jelaskan dengan detail keperluan pembuatan surat pengantar ini..." maxlength="500"></textarea>
                         <small class="text-gray-500 text-xs">Minimal 10 karakter, maksimal 500 karakter</small>
                         @error('keperluan')
                             <div class="flex items-center mt-1 text-red-600 text-sm">
@@ -313,7 +373,7 @@
                         </label>
                         <input type="email" wire:model="email"
                             class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
-                            placeholder="alamat@email.com">
+                            placeholder="alamat@email.com" maxlength="225">
                         <small class="text-gray-500 text-xs">Email untuk mengirimkan notifikasi status surat</small>
                         @error('email')
                             <div class="flex items-center mt-1 text-red-600 text-sm">
@@ -346,6 +406,8 @@
                     <p class="text-blue-700 text-sm">
                         Surat pengantar adalah dokumen resmi yang diperlukan untuk berbagai keperluan administratif.
                         Pastikan semua data yang dimasukkan sudah benar dan sesuai dengan dokumen resmi yang ada.
+                        <strong>Wajib upload foto KTP yang jelas dan dapat dibaca.</strong> File PDF pendukung bersifat
+                        opsional.
                     </p>
                 </div>
             </div>

@@ -6,7 +6,6 @@ Chart.register(ChartDataLabels);
 window.chartData = null;
 window.chartInstances = {};
 
-// Debounce function untuk menghindari multiple rapid calls
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -26,18 +25,15 @@ function destroyChart(chartId) {
     }
 }
 
-// Function to destroy all charts
 function destroyAllCharts() {
     Object.keys(window.chartInstances).forEach((chartId) => {
         destroyChart(chartId);
     });
 }
 
-// Optimized chart rendering dengan async
 async function renderChartsAsync() {
     if (!window.chartData) return;
 
-    // Render charts yang terlihat di viewport dulu
     const visibleCharts = [
         { func: renderchartWargaWNA, id: "chartWargaWNA" },
         { func: renderchartWargaWNI, id: "chartWargaWNI" },
@@ -53,25 +49,22 @@ async function renderChartsAsync() {
         { func: renderChartPendidikan, id: "chartPendidikan" },
     ];
 
-    // Render visible charts immediately
     for (const chart of visibleCharts) {
         if (document.getElementById(chart.id)) {
             chart.func();
         }
     }
 
-    // Render background charts with delay
     for (let i = 0; i < backgroundCharts.length; i++) {
         const chart = backgroundCharts[i];
         if (document.getElementById(chart.id)) {
             setTimeout(() => {
                 chart.func();
-            }, i * 50); // 50ms delay between each chart
+            }, i * 50);
         }
     }
 }
 
-// Debounced chart rendering
 const debouncedRenderCharts = debounce(renderChartsAsync, 100);
 
 document.addEventListener("livewire:init", () => {
@@ -80,15 +73,12 @@ document.addEventListener("livewire:init", () => {
 
         window.chartData = data[0];
 
-        // Destroy existing charts
         destroyAllCharts();
 
-        // Render charts with debouncing
         debouncedRenderCharts();
     });
 });
 
-// Optimized chart functions dengan early return dan error handling
 function renderchartWargaWNA() {
     const ctx = document.getElementById("chartWargaWNA");
     if (!ctx || !window.chartData?.WNA) return;
@@ -115,7 +105,7 @@ function renderchartWargaWNA() {
             options: {
                 responsive: true,
                 animation: {
-                    duration: 500, // Reduce animation time
+                    duration: 500,
                 },
                 plugins: {
                     datalabels: {
@@ -133,7 +123,6 @@ function renderchartWargaWNA() {
             plugins: [ChartDataLabels],
         });
 
-        // Update DOM elements
         const elements = {
             "wna-male": dataWNA[0],
             "wna-female": dataWNA[1],
@@ -193,7 +182,6 @@ function renderchartWargaWNI() {
             plugins: [ChartDataLabels],
         });
 
-        // Update DOM elements efficiently
         const elements = {
             "wni-male": dataWNI[0],
             "wni-female": dataWNI[1],
@@ -253,7 +241,6 @@ function renderTotalWarga() {
             plugins: [ChartDataLabels],
         });
 
-        // Update DOM elements
         const elements = {
             "total-male": data[0],
             "total-female": data[1],
@@ -269,7 +256,6 @@ function renderTotalWarga() {
     }
 }
 
-// Optimized bar chart functions
 function renderChartKelahiran() {
     const ctx = document.getElementById("chartKelahiran");
     if (!ctx || !window.chartData?.dataKelahiran) return;
@@ -341,7 +327,6 @@ function renderChartKelahiran() {
     }
 }
 
-// Continue with other chart functions following the same optimization pattern...
 function renderChartKematian() {
     const ctx = document.getElementById("chartKematian");
     if (!ctx || !window.chartData?.dataKematian) return;
@@ -413,7 +398,6 @@ function renderChartKematian() {
     }
 }
 
-// Apply same optimization pattern to remaining chart functions...
 function renderChartGenerasi() {
     const ctx = document.getElementById("chartGenerasi");
     if (!ctx || !window.chartData?.generasi) return;
@@ -486,7 +470,6 @@ function renderChartGenerasi() {
     }
 }
 
-// Continue with optimized versions of remaining functions...
 function renderChartPerkawinan() {
     const ctx = document.getElementById("chartPerkawinan");
     if (!ctx || !window.chartData?.perkawinan) return;
@@ -697,7 +680,6 @@ function renderChartPendidikan() {
     }
 }
 
-// Cleanup when page unloads
 window.addEventListener("beforeunload", () => {
     destroyAllCharts();
 });

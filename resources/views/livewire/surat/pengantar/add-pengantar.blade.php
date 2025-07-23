@@ -149,6 +149,88 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Keperluan</label>
                                     <p class="text-gray-900 font-semibold">{{ $selectedSurat->keperluan }}</p>
                                 </div>
+                                {{-- File PDF Surat --}}
+                                @if ($selectedSurat->file_pdf)
+                                    <div class="md:col-span-2 mt-6">
+                                        <label class="block text-sm font-medium text-gray-600 mb-1">File Surat
+                                            (PDF)</label>
+                                        <div class="flex gap-3 items-center">
+                                            <a href="{{ asset('storage/' . $selectedSurat->file_pdf) }}"
+                                                target="_blank"
+                                                class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700">Lihat</a>
+                                            <a href="{{ asset('storage/' . $selectedSurat->file_pdf) }}" download
+                                                class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Download</a>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Foto KTP --}}
+                                @if ($selectedSurat->foto_ktp)
+                                    <div class="md:col-span-2 mt-4">
+                                        <label class="block text-sm font-medium text-gray-600 mb-1">Foto KTP</label>
+                                        <div class="flex gap-3 items-center">
+                                            <a href="{{ asset('storage/' . $selectedSurat->foto_ktp) }}"
+                                                target="_blank"
+                                                class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700">Lihat</a>
+                                            <a href="{{ asset('storage/' . $selectedSurat->foto_ktp) }}" download
+                                                class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Download</a>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Status surat --}}
+                                @if (in_array(Auth::user()->role, ['pengelola_rw', 'pengelola_rt']))
+                                    <div class="md:col-span-2 mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <h4 class="text-lg font-semibold text-blue-900 mb-4">Update Status Surat</h4>
+
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Status
+                                                    Surat</label>
+                                                <select wire:model="statusSurat"
+                                                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                    <option value="diproses">Diproses</option>
+                                                    <option value="tindakan">Tindakan</option>
+                                                    <option value="disetujui">Disetujui</option>
+                                                    <option value="ditolak">Ditolak</option>
+                                                </select>
+                                            </div>
+
+                                            {{-- Tombol Submit --}}
+                                            <div class="flex justify-end">
+                                                <button wire:click="submitStatusChange"
+                                                    class="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                    Update Status
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Status surat saat ini --}}
+                                <div class="md:col-span-2 mt-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Surat Saat
+                                        Ini</label>
+                                    <div class="flex items-center">
+                                        @php
+                                            $statusColors = [
+                                                'diproses' => 'bg-yellow-100 text-yellow-800',
+                                                'tindakan' => 'bg-orange-100 text-orange-800',
+                                                'disetujui' => 'bg-green-100 text-green-800',
+                                                'ditolak' => 'bg-red-100 text-red-800',
+                                            ];
+                                        @endphp
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-medium {{ $statusColors[$selectedSurat->status] ?? 'bg-gray-100 text-gray-800' }}">
+                                            {{ ucfirst($selectedSurat->status) }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

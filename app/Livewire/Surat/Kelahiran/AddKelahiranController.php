@@ -53,12 +53,11 @@ class AddKelahiranController extends Component
         ]);
 
         session()->flash('success', 'Tanda tangan berhasil ditambahkan.');
-        $this->mount(); // Refresh data
+        $this->mount();
     }
 
     public function render()
     {
-        // dd($this->SuratKelahiran);
         return view('livewire.surat.kelahiran.add-kelahiran', [
             'title' => 'Pengajuan surat kelahiran',
             'kelahirans' => $this->SuratKelahiran

@@ -15,8 +15,6 @@ class DeletKematian extends Component
 
     public function openModal($data)
     {
-        // dd('berhasil');
-
         $this->suratId = $data['id_kematian'];
 
         $surat = SuratKematian::find($this->suratId);

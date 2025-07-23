@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('surat_kelahirans', function (Blueprint $table) {
             $table->id('id_kelahiran');
             $table->string('nama_anak', 225);
+            $table->string('anak_ke', 100);
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('tempat_lahir', 100);
             $table->date('tanggal_lahir');

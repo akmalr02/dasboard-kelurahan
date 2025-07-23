@@ -30,13 +30,11 @@ class SuratKematian extends Model
         'kode_verifikasi',
     ];
 
-    // Relasi ke warga sebagai pelapor
     public function pelapor()
     {
         return $this->belongsTo(Warga::class, 'id_pelapor', 'id_warga');
     }
 
-    // Relasi ke user sebagai admin penandatangan
     public function admin()
     {
         return $this->belongsTo(User::class, 'id_admin', 'id_user');

@@ -24,28 +24,12 @@
                         <label class="text-sm font-medium text-gray-500">Nama</label>
                         <div class="flex items-center justify-between">
                             <p class="text-gray-900 font-medium">{{ $user->name }}</p>
-                            <button class="ml-3 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                                wire:click="$emit('editName')" title="Edit Nama">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                    </path>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                     <div class="space-y-1">
                         <label class="text-sm font-medium text-gray-500">Email</label>
                         <div class="flex items-center justify-between">
                             <p class="text-gray-900 font-medium">{{ $user->email }}</p>
-                            <button class="ml-3 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                                wire:click="$emit('editEmail')" title="Edit Email">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                    </path>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                     <div class="space-y-1">

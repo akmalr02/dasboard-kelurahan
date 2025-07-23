@@ -38,7 +38,6 @@ class KematianController extends Component
     public function showEdit($id)
     {
         $surat = SuratKematian::findOrFail($id);
-        // dd($surat);
         $surat->jam_meninggal = Carbon::parse($surat->jam_meninggal)->format('H:i');
 
         $suratArray = $surat->toArray();
@@ -48,7 +47,6 @@ class KematianController extends Component
     public function showDelete($id)
     {
         $surat = SuratKematian::findOrFail($id);
-        // dd($surat);
         $suratArray = $surat->toArray();
         $this->dispatch('deletKematian', $suratArray);
     }
@@ -72,13 +70,10 @@ class KematianController extends Component
             ->where('id_pelapor', $idWarga)
             ->latest()
             ->get();
-
-        // dd($this->dataKematian);
     }
 
     public function render()
     {
-        // dd('berhasil kematian');
         return view('livewire.surat.kematian.kematian', [
             'title' => 'Pengajuan surat kematian',
             'kematianList' => $this->dataKematian

@@ -41,6 +41,11 @@
                     </p>
                 </div>
                 <div class="bg-gray-50 p-4 rounded-lg">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Anak ke</label>
+                    <p class="text-gray-900 font-semibold">{{ data_get($selectedSurat, 'anak_ke', '-') }}
+                    </p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
                     <p class="text-gray-900">
                         {{ data_get($selectedSurat, 'jenis_kelamin') == 'L' ? 'Laki-laki' : 'Perempuan', '-' }}

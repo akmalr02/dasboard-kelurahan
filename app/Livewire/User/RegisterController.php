@@ -36,7 +36,6 @@ class RegisterController extends Component
 
     public function render()
     {
-        // dd('berhasil');
         return view('livewire.user.register');
     }
 
@@ -78,7 +77,5 @@ class RegisterController extends Component
 
         session()->flash('message', 'Registrasi berhasil! Silakan login.');
         return redirect()->route('login');
-
-        // dd($user);
     }
 }

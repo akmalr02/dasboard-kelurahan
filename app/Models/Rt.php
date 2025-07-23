@@ -21,20 +21,16 @@ class Rt extends Model
 
     protected $guarded = ['id_RT'];
 
-
-    // Relasi ke RW
     public function rw()
     {
         return $this->belongsTo(Rw::class, 'id_RW', 'id_RW');
     }
 
-    // Relasi ke user
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
-    // Relasi ke warga
     public function wargas()
     {
         return $this->hasMany(Warga::class, 'id_RT', 'id_RT');

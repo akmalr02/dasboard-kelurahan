@@ -14,10 +14,6 @@
                 <div
                     class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
                     <div class="flex items-start gap-4">
-                        <img class="w-16 h-16 rounded-full object-cover border-2 border-gray-100"
-                            src="{{ $k->foto_profil ? asset('storage/' . $k->foto_profil) : asset('img/user.jpg') }}"
-                            alt="foto_profil {{ $k->name }}">
-
                         <div class="flex-1">
                             <h3 class="text-lg font-semibold text-gray-900 truncate">{{ $k->name }}</h3>
 

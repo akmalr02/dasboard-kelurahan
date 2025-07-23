@@ -15,7 +15,6 @@ class TtdSettingForm extends Component
     public User $user;
     public $ttd_digital;
     public $showTtdModal = false;
-    // public $isUploading = false;
 
     protected $rules = [
         'ttd_digital' => 'required|image|mimes:png,jpg,jpeg|max:1024'
@@ -35,35 +34,20 @@ class TtdSettingForm extends Component
 
     public function uploadTandaTangan()
     {
-        // $this->isUploading = true;
         $this->validate();
 
-        // Hapus tanda tangan lama jika ada
         if ($this->user->ttd_digital && Storage::disk('public')->exists($this->user->ttd_digital)) {
             Storage::disk('public')->delete($this->user->ttd_digital);
         }
 
-        // Upload tanda tangan baru
         $path = $this->ttd_digital->store('ttd_digital', 'public');
 
         $this->user->update(['ttd_digital' => $path]);
 
         $this->reset(['ttd_digital', 'showTtdModal']);
-        // $this->isUploading = false;
 
-        session()->flash('success', 'Tanda tangan berhasil diunggah.');
+        session()->flash('success', 'Gambar tanda tangan tersimpan.');
         $this->dispatch('ttd-uploaded');
-    }
-
-    public function hapusTandaTangan()
-    {
-        if ($this->user->ttd_digital && Storage::disk('public')->exists($this->user->ttd_digital)) {
-            Storage::disk('public')->delete($this->user->ttd_digital);
-        }
-
-        $this->user->update(['ttd_digital' => null]);
-        session()->flash('success', 'Tanda tangan berhasil dihapus.');
-        $this->dispatch('ttd-deleted');
     }
 
     public function closeModal()
