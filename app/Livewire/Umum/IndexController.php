@@ -38,13 +38,13 @@ class IndexController extends Component
 
     public function updatedIdRT()
     {
+        $this->loadAvailableRT();
         $this->localData();
         $this->dispatchChartData();
     }
 
     public function mount()
     {
-        $this->loadAvailableRT();
         $this->localData();
         $this->dispatchChartData();
     }

@@ -11,6 +11,8 @@ class WargaSeeder extends Seeder
     public function run(): void
     {
         $file = storage_path('app/public/data warga.xlsx');
+
+        echo "Loading file Excel...\n";
         $spreadsheet = IOFactory::load($file);
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray(null, true, true, true);
@@ -19,43 +21,113 @@ class WargaSeeder extends Seeder
         unset($rows[1]);
 
         $data = [];
-        foreach ($rows as $row) {
-            $rt = DB::table('rts')->where('no_RT', $row['O'])->first();
-            $rw = DB::table('rws')->where('no_RW', $row['P'])->first();
+        $skipped = 0;
+        $processed = 0;
 
-            if (!$rt || !$rw) {
-                continue; // lewati jika tidak ada RT/RW
+        echo "Processing " . count($rows) . " rows...\n";
+
+        foreach ($rows as $rowIndex => $row) {
+            // Skip jika NIK kosong
+            if (empty($row['A'])) {
+                $skipped++;
+                continue;
+            }
+
+            // Ambil ID RT dan RW langsung dari Excel
+            $id_rt = $row['O'] ?? null;
+            $id_rw = $row['P'] ?? null;
+
+            // Skip jika ID RT atau RW kosong
+            if (!$id_rt || !$id_rw) {
+                echo "Row {$rowIndex}: ID RT/RW kosong - RT: {$id_rt}, RW: {$id_rw}\n";
+                $skipped++;
+                continue;
+            }
+
+            // Validasi ID RT dan RW ada di database
+            $rt_exists = DB::table('rts')->where('id_RT', $id_rt)->exists();
+            $rw_exists = DB::table('rws')->where('id_RW', $id_rw)->exists();
+
+            if (!$rt_exists) {
+                echo "Row {$rowIndex}: ID RT tidak ditemukan: {$id_rt}\n";
+                $skipped++;
+                continue;
+            }
+
+            if (!$rw_exists) {
+                echo "Row {$rowIndex}: ID RW tidak ditemukan: {$id_rw}\n";
+                $skipped++;
+                continue;
+            }
+
+            // Cek duplikasi NIK
+            $existing = DB::table('wargas')->where('NIK', $row['A'])->exists();
+            if ($existing) {
+                echo "Row {$rowIndex}: NIK sudah ada: {$row['A']}\n";
+                $skipped++;
+                continue;
+            }
+
+            // Handle tanggal lahir
+            $tanggalLahir = null;
+            if (!empty($row['J'])) {
+                if (is_numeric($row['J'])) {
+                    // Excel date format (serial number)
+                    $tanggalLahir = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['J'])->format('Y-m-d');
+                } else {
+                    // Text format
+                    $tanggalLahir = date('Y-m-d', strtotime($row['J']));
+                }
             }
 
             $data[] = [
                 'NIK' => $row['A'],
-                'NKK' => $row['B'],
-                'name' => $row['C'],
-                'jenis_kelamin' => $row['D'],
-                'kewarganegaraan' => $row['E'],
-                'agama' => $row['F'],
-                'pekerjaan' => $row['G'],
-                'alamat' => $row['H'],
-                'tempat_lahir' => $row['I'],
-                'tanggal_lahir' => date('Y-m-d', strtotime($row['J'])),
-                'golongan_darah' => $row['K'],
-                'status_perkawinan' => $row['L'],
-                'pendidikan' => $row['M'],
-                'status_keluarga' => $row['N'],
+                'NKK' => $row['B'] ?? null,
+                'name' => $row['C'] ?? null,
+                'jenis_kelamin' => $row['D'] ?? null,
+                'kewarganegaraan' => $row['E'] ?? null,
+                'agama' => $row['F'] ?? null,
+                'pekerjaan' => $row['G'] ?? null,
+                'alamat' => $row['H'] ?? null,
+                'tempat_lahir' => $row['I'] ?? null,
+                'tanggal_lahir' => $tanggalLahir,
+                'golongan_darah' => $row['K'] ?? null,
+                'status_perkawinan' => $row['L'] ?? null,
+                'pendidikan' => $row['M'] ?? null,
+                'status_keluarga' => $row['N'] ?? null,
                 'status_penduduk' => 'hidup',
                 'tanggal_meninggal' => null,
-                'id_RT' => $rt->id_RT,
-                'id_RW' => $rw->id_RW,
+                'id_RT' => $id_rt,
+                'id_RW' => $id_rw,
                 'role' => 'warga',
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
+
+            $processed++;
+
+            // Progress indicator
+            if ($processed % 100 == 0) {
+                echo "Processed: {$processed} rows\n";
+            }
         }
 
-        // Masukkan batch
-        $chunks = array_chunk($data, 300);
-        foreach ($chunks as $chunk) {
-            DB::table('wargas')->insert($chunk);
+        echo "Total processed: {$processed}, Skipped: {$skipped}\n";
+
+        if (empty($data)) {
+            echo "Tidak ada data yang valid untuk dimasukkan\n";
+            return;
         }
+
+        echo "Inserting " . count($data) . " records to database...\n";
+
+        // Masukkan batch
+        $chunks = array_chunk($data, 100);
+        foreach ($chunks as $chunkIndex => $chunk) {
+            DB::table('wargas')->insert($chunk);
+            echo "Inserted chunk " . ($chunkIndex + 1) . "/" . count($chunks) . "\n";
+        }
+
+        echo "Seeding completed!\n";
     }
 }

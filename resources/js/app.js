@@ -71,7 +71,7 @@ document.addEventListener("livewire:init", () => {
     Livewire.on("chartDataWarga", (data) => {
         console.log("Data diterima dari Livewire:", data);
 
-        window.chartData = data[0];
+        window.chartData = Array.isArray(data) ? data[0] : data;
 
         destroyAllCharts();
 
@@ -86,7 +86,7 @@ function renderchartWargaWNA() {
     destroyChart("chartWargaWNA");
 
     const dataWNA = [window.chartData.WNA.L ?? 0, window.chartData.WNA.P ?? 0];
-
+    console.log("totalWNA", dataWNA);
     try {
         window.chartInstances["chartWargaWNA"] = new Chart(ctx, {
             type: "doughnut",
@@ -145,6 +145,7 @@ function renderchartWargaWNI() {
     destroyChart("chartWargaWNI");
 
     const dataWNI = [window.chartData.WNI.L ?? 0, window.chartData.WNI.P ?? 0];
+    console.log("total WNI", dataWNI);
 
     try {
         window.chartInstances["chartWargaWNI"] = new Chart(ctx, {
@@ -204,6 +205,7 @@ function renderTotalWarga() {
     destroyChart("chartTotalWarga");
 
     const data = [window.chartData.TOTAL.L ?? 0, window.chartData.TOTAL.P ?? 0];
+    console.log("total", data);
 
     try {
         window.chartInstances["chartTotalWarga"] = new Chart(ctx, {
