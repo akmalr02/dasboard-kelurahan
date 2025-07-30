@@ -69,7 +69,7 @@
                             <div class="flex flex-col items-center mb-8">
                                 <div class="relative">
                                     <img class="w-24 h-24 rounded-full object-cover border-4 border-gray-100 shadow-lg"
-                                        src="{{ $selectedWarga->foto_profil ? asset('storage/' . $selectedWarga->foto_profil) : asset('img/user.jpg') }}"
+                                        src="{{ $selectedWarga->foto_profil ? secure_asset('storage/' . $selectedWarga->foto_profil) : secure_asset('img/user.jpg') }}"
                                         alt="foto_profil {{ $selectedWarga->name }}">
                                 </div>
                                 <h3 class="text-xl font-semibold text-gray-900 mt-4">{{ $selectedWarga->name }}</h3>

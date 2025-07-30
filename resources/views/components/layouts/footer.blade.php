@@ -1,7 +1,7 @@
 <footer class="bg-blue-800 text-white py-4 px-6" id="contact">
     <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-4">
         <div class="flex items-center space-x-4 justify-center md:justify-start">
-            <img src="{{ asset('img/logo.png') }}" alt="Logo DKI Jakarta" class="w-16 h-auto">
+            <img src="{{ secure_asset('img/logo.png') }}" alt="Logo DKI Jakarta" class="w-16 h-auto">
             <div class="text-sm">
                 <p class="font-semibold">PROVINSI DKI JAKARTA</p>
                 <p>KANTOR LURAH</p>

@@ -84,11 +84,11 @@
                     <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">File Surat (PDF)</label>
                         <div class="flex gap-3 items-center">
-                            <a href="{{ asset('storage/' . data_get($surat, 'file_pdf')) }}" target="_blank"
+                            <a href="{{ secure_asset('storage/' . data_get($surat, 'file_pdf')) }}" target="_blank"
                                 class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700">
                                 Lihat
                             </a>
-                            <a href="{{ asset('storage/' . data_get($surat, 'file_pdf')) }}" download
+                            <a href="{{ secure_asset('storage/' . data_get($surat, 'file_pdf')) }}" download
                                 class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
                                 Download
                             </a>
@@ -100,15 +100,15 @@
                     <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Foto KTP</label>
                         <div class="flex flex-col sm:flex-row gap-4 sm:items-center">
-                            <img src="{{ asset('storage/' . data_get($surat, 'foto_ktp')) }}" alt="Foto KTP"
+                            <img src="{{ secure_asset('storage/' . data_get($surat, 'foto_ktp')) }}" alt="Foto KTP"
                                 class="w-32 h-auto rounded border border-gray-300">
 
                             <div class="flex gap-3">
-                                <a href="{{ asset('storage/' . data_get($surat, 'foto_ktp')) }}" target="_blank"
+                                <a href="{{ secure_asset('storage/' . data_get($surat, 'foto_ktp')) }}" target="_blank"
                                     class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700">
                                     Lihat
                                 </a>
-                                <a href="{{ asset('storage/' . data_get($surat, 'foto_ktp')) }}" download
+                                <a href="{{ secure_asset('storage/' . data_get($surat, 'foto_ktp')) }}" download
                                     class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
                                     Download
                                 </a>
@@ -230,7 +230,7 @@
                         @if (data_get($surat, 'file_ttd_rw'))
                             <div class="flex items-center space-x-3">
                                 <div class="bg-white p-2 rounded border">
-                                    <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(asset('storage/' . data_get($surat, 'file_ttd_rw')), 'QRCODE') }}"
+                                    <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(secure_asset('storage/' . data_get($surat, 'file_ttd_rw')), 'QRCODE') }}"
                                         alt="QR RW" class="w-16 h-16">
                                 </div>
                                 <span
@@ -262,7 +262,7 @@
                         @if (data_get($surat, 'file_ttd_rt'))
                             <div class="flex items-center space-x-3">
                                 <div class="bg-white p-2 rounded border">
-                                    <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(asset('storage/' . data_get($surat, 'file_ttd_rt')), 'QRCODE') }}"
+                                    <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(secure_asset('storage/' . data_get($surat, 'file_ttd_rt')), 'QRCODE') }}"
                                         alt="QR RT" class="w-16 h-16">
                                 </div>
                                 <span

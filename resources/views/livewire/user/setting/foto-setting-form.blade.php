@@ -35,7 +35,7 @@
     <div class="flex items-start space-x-6">
         <div class="flex-shrink-0">
             @if ($user->foto_profil)
-                <img src="{{ asset('storage/' . $user->foto_profil) }}" alt="Foto Profil"
+                <img src="{{ secure_asset('storage/' . $user->foto_profil) }}" alt="Foto Profil"
                     class="w-32 h-32 rounded-lg object-cover border-2 border-gray-200 shadow-sm">
             @else
                 <div class="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-gray-200">

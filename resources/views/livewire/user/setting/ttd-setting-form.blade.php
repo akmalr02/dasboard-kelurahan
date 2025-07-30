@@ -22,7 +22,7 @@
     <div class="flex items-start space-x-6">
         <div class="flex-shrink-0">
             @if ($user->ttd_digital)
-                <img src="{{ asset('storage/' . $user->ttd_digital) }}" alt="Tanda Tangan Digital"
+                <img src="{{ secure_asset('storage/' . $user->ttd_digital) }}" alt="Tanda Tangan Digital"
                     class="w-32 h-32 rounded-lg object-contain border-2 border-gray-200 shadow-sm bg-white">
             @else
                 <div class="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-gray-200">

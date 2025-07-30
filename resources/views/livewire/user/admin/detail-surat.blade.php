@@ -108,7 +108,7 @@
                     @endphp
                     @if ($ttd)
                         <div class="flex items-center gap-4">
-                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(asset('storage/' . $ttd), 'QRCODE') }}"
+                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(secure_asset('storage/' . $ttd), 'QRCODE') }}"
                                 class="w-16 h-16 border rounded bg-white p-1" />
                             <span
                                 class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
