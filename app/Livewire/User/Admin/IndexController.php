@@ -5,7 +5,7 @@ namespace App\Livewire\User\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Warga;
-use App\Models\RW;
+use App\Models\Rw;
 use App\Models\RT;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\WargaExport;

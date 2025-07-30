@@ -44,7 +44,7 @@
                                 <label class="text-sm font-medium text-gray-700">Pilih RW</label>
                                 <select wire:model.live="selectedRW" class="border-gray-300 rounded w-full">
                                     <option value="">-- Pilih RW --</option>
-                                    @foreach (\App\Models\RW::all() as $rw)
+                                    @foreach (\App\Models\Rw::all() as $rw)
                                         <option value="{{ $rw->id_RW }}">{{ $rw->id_RW }}</option>
                                     @endforeach
                                 </select>
