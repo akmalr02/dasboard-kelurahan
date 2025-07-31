@@ -15,6 +15,7 @@ class CorsMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Handle preflight OPTIONS request
         if ($request->getMethod() === "OPTIONS") {
             return response('', 200)
                 ->header('Access-Control-Allow-Origin', '*')
@@ -26,7 +27,18 @@ class CorsMiddleware
 
         $response = $next($request);
 
-        $response->headers->set('Access-Control-Allow-Origin', '*');
+        // Add CORS headers to response
+        $allowedOrigins = [
+            'https://dashboard-kelurahan-production.up.railway.app',
+            'https://dasboard-kelurahan-production.up.railway.app', // temporary for typo
+        ];
+
+        $origin = $request->headers->get('Origin');
+        if (in_array($origin, $allowedOrigins)) {
+            $response->headers->set('Access-Control-Allow-Origin', $origin);
+        } else {
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+        }
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-CSRF-TOKEN, X-Livewire, X-Socket-ID');
         $response->headers->set('Access-Control-Allow-Credentials', 'true');
