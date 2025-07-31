@@ -20,4 +20,13 @@ export default defineConfig({
             host: "localhost",
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    charts: ["chart.js", "chartjs-plugin-datalabels"],
+                },
+            },
+        },
+    },
 });
