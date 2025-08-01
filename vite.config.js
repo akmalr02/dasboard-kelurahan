@@ -21,13 +21,18 @@ export default defineConfig({
         },
     },
     build: {
+        manifest: true,
+        outDir: "public/build",
+        assetsDir: "assets",
         rollupOptions: {
             output: {
                 manualChunks: {
                     charts: ["chart.js", "chartjs-plugin-datalabels"],
                 },
+                assetFileNames: "assets/[name]-[hash][extname]",
+                chunkFileNames: "assets/[name]-[hash].js",
+                entryFileNames: "assets/[name]-[hash].js",
             },
         },
     },
-    base: "/build/",
 });
