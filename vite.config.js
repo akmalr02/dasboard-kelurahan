@@ -7,7 +7,7 @@ export default defineConfig({
         laravel({
             input: ["resources/css/app.css", "resources/js/app.js"],
             refresh: [
-                `resources/views/**/*`,
+                "resources/views/**/*",
                 "app/Livewire/**/*.php",
                 "resources/views/livewire/**/*.blade.php",
             ],
@@ -15,23 +15,22 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: "0.0.0.0",
+        port: 5173,
         cors: true,
         hmr: {
             host: "localhost",
+            port: 5173,
         },
     },
     build: {
         manifest: true,
         outDir: "public/build",
-        assetsDir: "assets",
         rollupOptions: {
             output: {
                 manualChunks: {
                     charts: ["chart.js", "chartjs-plugin-datalabels"],
                 },
-                assetFileNames: "assets/[name]-[hash][extname]",
-                chunkFileNames: "assets/[name]-[hash].js",
-                entryFileNames: "assets/[name]-[hash].js",
             },
         },
     },
