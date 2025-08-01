@@ -30,7 +30,7 @@ class CorsMiddleware
         // Add CORS headers to response
         $allowedOrigins = [
             'https://dashboard-kelurahan-production.up.railway.app',
-            'https://dasboard-kelurahan-production.up.railway.app', // temporary for typo
+            'https://dashboard-kelurahan-production.up.railway.app', // temporary for typo
         ];
 
         $origin = $request->headers->get('Origin');
