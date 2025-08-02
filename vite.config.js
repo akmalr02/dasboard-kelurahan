@@ -30,10 +30,7 @@ export default defineConfig(({ mode }) => ({
         target: ["es2015", "safari10"],
         rollupOptions: {
             output: {
-                format: "iife",
-                manualChunks: {
-                    charts: ["chart.js", "chartjs-plugin-datalabels"],
-                },
+                manualChunks: undefined,
             },
         },
     },
