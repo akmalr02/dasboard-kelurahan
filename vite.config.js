@@ -27,16 +27,14 @@ export default defineConfig(({ mode }) => ({
         outDir: "public/build",
         emptyOutDir: true,
         manifest: true,
+        target: ["es2015", "safari10"],
         rollupOptions: {
             output: {
+                format: "iife",
                 manualChunks: {
                     charts: ["chart.js", "chartjs-plugin-datalabels"],
                 },
             },
         },
     },
-    base:
-        mode === "production"
-            ? "https://dashboard-kelurahan-production.up.railway.app/build/"
-            : "/build/",
 }));
