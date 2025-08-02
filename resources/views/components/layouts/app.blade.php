@@ -8,8 +8,14 @@
     <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-    {{-- Panggil CSS & JS yang dibundle oleh Vite --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Temporary manual links --}}
+    <link rel="stylesheet" href="{{ asset('build/assets/app-BSZC8mRm.css') }}">
+    <script src="{{ asset('build/assets/app-BvY4lizR.js') }}" defer></script>
+    <script src="{{ asset('build/assets/charts-Cvg9Q4_C.js') }}" defer></script>
+
+    {{-- Comment out vite directive temporarily
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+--}}
 
     @livewireStyles
 </head>

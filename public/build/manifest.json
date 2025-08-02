@@ -1,20 +1,18 @@
 {
-  "_charts-Cvg9Q4_C.js": {
-    "file": "assets/charts-Cvg9Q4_C.js",
-    "name": "charts"
-  },
-  "resources/css/app.css": {
-    "file": "assets/app-BSZC8mRm.css",
-    "src": "resources/css/app.css",
-    "isEntry": true
-  },
-  "resources/js/app.js": {
-    "file": "assets/app-BvY4lizR.js",
-    "name": "app",
-    "src": "resources/js/app.js",
-    "isEntry": true,
-    "imports": [
-      "_charts-Cvg9Q4_C.js"
-    ]
-  }
+    "_charts-Cvg9Q4_C.js": {
+        "file": "assets/charts-Cvg9Q4_C.js",
+        "name": "charts"
+    },
+    "resources/css/app.css": {
+        "file": "assets/app-BSZC8mRm.css",
+        "src": "resources/css/app.css",
+        "isEntry": true
+    },
+    "resources/js/app.js": {
+        "file": "assets/app-BvY4lizR.js",
+        "name": "app",
+        "src": "resources/js/app.js",
+        "isEntry": true,
+        "imports": ["_charts-Cvg9Q4_C.js"]
+    }
 }
