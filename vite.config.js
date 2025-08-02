@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     plugins: [
         laravel({
             input: ["resources/css/app.css", "resources/js/app.js"],
@@ -35,4 +35,8 @@ export default defineConfig({
             },
         },
     },
-});
+    base:
+        mode === "production"
+            ? "https://dashboard-kelurahan-production.up.railway.app/build/"
+            : "/build/",
+}));
