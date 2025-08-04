@@ -27,5 +27,13 @@
 
     @livewireScripts
 </body>
+<script>
+    document.addEventListener('livewire:navigated', () => {
+        if (typeof renderChartsAsync === 'function') {
+            destroyAllCharts();
+            renderChartsAsync();
+        }
+    });
+</script>
 
 </html>
