@@ -2,6 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "dev": "vite",
         "build": "vite build && node fix-manifest.js",
         "build-only": "vite build"
     },
