@@ -1,4 +1,4 @@
-console.log("test");
+console.log("app.js berhasil");
 // import Chart from "chart.js/auto";
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 

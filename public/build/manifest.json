@@ -1,6 +1,6 @@
 {
-  "_charts-hR2dI-Zh.js": {
-    "file": "assets/charts-hR2dI-Zh.js",
+  "_charts-l0sNRNKZ.js": {
+    "file": "assets/charts-l0sNRNKZ.js",
     "name": "charts"
   },
   "resources/css/app.css": {
@@ -9,12 +9,9 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CXxV6M-Y.js",
+    "file": "assets/app-Bhi3Lbug.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true,
-    "imports": [
-      "_charts-hR2dI-Zh.js"
-    ]
+    "isEntry": true
   }
 }
