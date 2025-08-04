@@ -77,15 +77,6 @@ document.addEventListener("livewire:init", () => {
     });
 });
 
-window.addEventListener("chartDataWargaInit", (event) => {
-    const data = event.detail;
-    window.chartData = Array.isArray(data) ? data[0] : data;
-    console.log("chartDataWargaInit", data);
-
-    destroyAllCharts();
-    debouncedRenderCharts();
-});
-
 function renderchartWargaWNA() {
     const ctx = document.getElementById("chartWargaWNA");
     if (!ctx || !window.chartData?.WNA) return;

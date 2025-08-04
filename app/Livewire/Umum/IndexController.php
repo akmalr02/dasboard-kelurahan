@@ -76,8 +76,6 @@ class IndexController extends Component
         ];
 
         $this->dispatch('chartDataWarga', $data);
-
-        $this->dispatchBrowserEvent('chartDataWargaInit', $data);
     }
 
     public function localData()
