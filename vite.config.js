@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => ({
         outDir: "public/build",
         emptyOutDir: true,
         manifest: true,
+        minify: false,
         rollupOptions: {
             output: {
                 manualChunks: {

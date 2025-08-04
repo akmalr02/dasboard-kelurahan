@@ -1,20 +1,20 @@
 {
-  "_charts-Cvg9Q4_C.js": {
-    "file": "assets/charts-Cvg9Q4_C.js",
+  "_charts-hR2dI-Zh.js": {
+    "file": "assets/charts-hR2dI-Zh.js",
     "name": "charts"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BSZC8mRm.css",
+    "file": "assets/app-o519kLos.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BvY4lizR.js",
+    "file": "assets/app-CXxV6M-Y.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_charts-Cvg9Q4_C.js"
+      "_charts-hR2dI-Zh.js"
     ]
   }
 }
