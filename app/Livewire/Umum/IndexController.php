@@ -60,7 +60,7 @@ class IndexController extends Component
 
     private function dispatchChartData()
     {
-        $this->dispatch('chartDataWarga', [
+        $data = [
             'WNA' => $this->WNAData,
             'WNI' => $this->WNIData,
             'TOTAL' => $this->totalData,
@@ -73,7 +73,11 @@ class IndexController extends Component
             'perkawinan' => $this->perkawinan,
             'agama' => $this->agama,
             'pendidikan' => $this->pendidikan,
-        ]);
+        ];
+
+        $this->dispatch('chartDataWarga', $data);
+
+        $this->dispatchBrowserEvent('chartDataWargaInit', $data);
     }
 
     public function localData()
