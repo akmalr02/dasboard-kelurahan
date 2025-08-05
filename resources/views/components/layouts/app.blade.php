@@ -4,12 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name') }}</title>
     <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     @livewireStyles
 </head>
 
@@ -25,6 +24,16 @@
     </div>
 
     @livewireScripts
+
+    <script>
+        Livewire.onError(statusCode => {
+            if (statusCode === 419) {
+                alert('Sesi Anda telah habis. Halaman akan di-refresh.');
+                window.location.reload();
+                return false;
+            }
+        });
+    </script>
 </body>
 
 </html>
