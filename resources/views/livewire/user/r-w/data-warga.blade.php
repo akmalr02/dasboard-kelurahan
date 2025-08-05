@@ -38,7 +38,7 @@
                             <label class="text-sm font-medium text-gray-700">Pilih RT</label>
                             <select x-model="$wire.selectedRT" class="border-gray-300 rounded w-full mt-1">
                                 <option value="">-- Pilih RT --</option>
-                                @foreach (\App\Models\RT::where('id_RW', Auth::user()->id_rw)->get() as $rt)
+                                @foreach (\App\Models\Rt::where('id_RW', Auth::user()->id_rw)->get() as $rt)
                                     <option value="{{ $rt->id_RT }}">RT {{ $rt->no_RT }}</option>
                                 @endforeach
                             </select>

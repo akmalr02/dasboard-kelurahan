@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Warga;
 use App\Models\Rw;
-use App\Models\RT;
+use App\Models\Rt;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\WargaExport;
 use App\Exports\FilteredWargaExport;

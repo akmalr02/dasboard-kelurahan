@@ -3,11 +3,9 @@
 namespace App\Livewire\User\RT;
 
 use Livewire\Component;
-use App\Models\User;
 use App\Models\Warga;
-use App\Models\RT;
+use App\Models\Rt;
 use App\Exports\FilteredWargaExport;
-use App\Exports\WargaExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;

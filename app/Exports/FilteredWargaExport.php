@@ -3,7 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Warga;
-use App\Models\RT;
+use App\Models\Rt;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 

@@ -56,7 +56,7 @@
                                     :disabled="!$wire.selectedRW">
                                     <option value="">-- Pilih RT --</option>
                                     @if ($selectedRW)
-                                        @foreach (\App\Models\RT::where('id_RW', $selectedRW)->get() as $rt)
+                                        @foreach (\App\Models\Rt::where('id_RW', $selectedRW)->get() as $rt)
                                             <option value="{{ $rt->no_RT }}">RT {{ $rt->no_RT }}</option>
                                         @endforeach
                                     @endif

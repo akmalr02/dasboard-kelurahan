@@ -5,7 +5,7 @@ namespace App\Livewire\Umum;
 use Livewire\Component;
 use App\Models\Warga;
 use App\Models\Rw;
-use App\Models\RT;
+use App\Models\Rt;
 
 class IndexController extends Component
 {
