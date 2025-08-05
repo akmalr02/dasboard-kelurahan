@@ -46,7 +46,6 @@ class FilteredWargaExport implements FromCollection, WithHeadings
     {
         $query = Warga::with(['rt.rw']);
 
-        // ✅ Tambahkan filter berdasarkan tipe
         switch ($this->tipe) {
             case 'rw':
                 $rtIDs = RT::where('id_RW', $this->nilai)->pluck('id_RT');
@@ -54,7 +53,6 @@ class FilteredWargaExport implements FromCollection, WithHeadings
                 break;
 
             case 'rt':
-                // nilai berupa no_RT, cari id_RT
                 $rt = RT::where('no_RT', $this->nilai)->first();
                 if ($rt) {
                     $query->where('id_RT', $rt->id_RT);
@@ -71,7 +69,6 @@ class FilteredWargaExport implements FromCollection, WithHeadings
             ->orderBy('NIK')
             ->orderBy('name')
             ->get()
-            // ->filter(fn($w) => $w->rt && $w->rw)
             ->map(function ($warga) {
                 return [
                     $warga->NIK,

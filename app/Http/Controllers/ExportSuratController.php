@@ -37,7 +37,6 @@ class ExportSuratController extends Controller
                 abort(404, 'Jenis surat tidak ditemukan.');
         }
 
-        // Validasi apakah surat sudah ditandatangani
         if (
             ($jenis === 'kelahiran' && !$surat->file_ttd_admin) ||
             ($jenis === 'kematian' && !$surat->file_ttd_admin) ||
@@ -46,7 +45,6 @@ class ExportSuratController extends Controller
             return back()->with('error', 'Surat belum lengkap ditandatangani!');
         }
 
-        // Pastikan view tersedia
         if (!View::exists($view)) {
             abort(500, "View {$view} tidak ditemukan.");
         }

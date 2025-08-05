@@ -10,8 +10,6 @@ class WargaExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
-
-        // dd(Warga::with(['rw', 'rt'])->first());
         return Warga::with(['rt.rw'])
             ->orderBy('id_RW')
             ->orderBy('id_RT')

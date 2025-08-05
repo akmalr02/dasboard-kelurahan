@@ -15,16 +15,12 @@
         </div>
 
         <div class="flex justify-center md:justify-end space-x-6 text-white text-xl">
-            <a href="https://www.instagram.com/" class="hover:text-pink-500 transition-colors duration-200"
-                target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/kelurahankramatjp/?next=%2F"
+                class="hover:text-pink-500 transition-colors duration-200" target="_blank" rel="noopener noreferrer">
                 <x-ri-instagram-line class="w-6 h-6" />
             </a>
-            <a href="https://www.facebook.com/" class="hover:text-blue-400 transition-colors duration-200"
-                target="_blank" rel="noopener noreferrer">
-                <x-ri-facebook-circle-line class="w-6 h-6" />
-            </a>
-            <a href="https://twitter.com/" class="hover:text-gray-400 transition-colors duration-200" target="_blank"
-                rel="noopener noreferrer">
+            <a href="https://x.com/JpKramat?t=S0Y8Nbq6NcOWFXYt_vDQWQ&s=09"
+                class="hover:text-gray-400 transition-colors duration-200" target="_blank" rel="noopener noreferrer">
                 <x-ri-twitter-x-line class="w-6 h-6" />
             </a>
         </div>

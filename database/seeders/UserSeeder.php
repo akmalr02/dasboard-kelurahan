@@ -10,7 +10,6 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Buat user admin
         DB::table('users')->insert([
             'name' => 'Administrator',
             'email' => 'admin@example.com',

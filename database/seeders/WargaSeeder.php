@@ -17,7 +17,6 @@ class WargaSeeder extends Seeder
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray(null, true, true, true);
 
-        // Buang header
         unset($rows[1]);
 
         $data = [];
@@ -27,24 +26,20 @@ class WargaSeeder extends Seeder
         echo "Processing " . count($rows) . " rows...\n";
 
         foreach ($rows as $rowIndex => $row) {
-            // Skip jika NIK kosong
             if (empty($row['A'])) {
                 $skipped++;
                 continue;
             }
 
-            // Ambil ID RT dan RW langsung dari Excel
             $id_rt = $row['O'] ?? null;
             $id_rw = $row['P'] ?? null;
 
-            // Skip jika ID RT atau RW kosong
             if (!$id_rt || !$id_rw) {
                 echo "Row {$rowIndex}: ID RT/RW kosong - RT: {$id_rt}, RW: {$id_rw}\n";
                 $skipped++;
                 continue;
             }
 
-            // Validasi ID RT dan RW ada di database
             $rt_exists = DB::table('rts')->where('id_RT', $id_rt)->exists();
             $rw_exists = DB::table('rws')->where('id_RW', $id_rw)->exists();
 
@@ -60,7 +55,6 @@ class WargaSeeder extends Seeder
                 continue;
             }
 
-            // Cek duplikasi NIK
             $existing = DB::table('wargas')->where('NIK', $row['A'])->exists();
             if ($existing) {
                 echo "Row {$rowIndex}: NIK sudah ada: {$row['A']}\n";
@@ -68,14 +62,11 @@ class WargaSeeder extends Seeder
                 continue;
             }
 
-            // Handle tanggal lahir
             $tanggalLahir = null;
             if (!empty($row['J'])) {
                 if (is_numeric($row['J'])) {
-                    // Excel date format (serial number)
                     $tanggalLahir = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['J'])->format('Y-m-d');
                 } else {
-                    // Text format
                     $tanggalLahir = date('Y-m-d', strtotime($row['J']));
                 }
             }
@@ -106,7 +97,6 @@ class WargaSeeder extends Seeder
 
             $processed++;
 
-            // Progress indicator
             if ($processed % 100 == 0) {
                 echo "Processed: {$processed} rows\n";
             }
@@ -121,7 +111,6 @@ class WargaSeeder extends Seeder
 
         echo "Inserting " . count($data) . " records to database...\n";
 
-        // Masukkan batch
         $chunks = array_chunk($data, 100);
         foreach ($chunks as $chunkIndex => $chunk) {
             DB::table('wargas')->insert($chunk);

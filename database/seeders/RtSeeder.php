@@ -9,13 +9,11 @@ class RtSeeder extends Seeder
 {
     public function run(): void
     {
-        // Kosongkan dulu tabel rts
         DB::table('rts')->delete();
 
         $totalRW = 8;
 
         for ($rwId = 1; $rwId <= $totalRW; $rwId++) {
-            // Acak antara 7 atau 8 RT untuk RW ini
             $jumlahRT = rand(7, 8);
 
             for ($rt = 1; $rt <= $jumlahRT; $rt++) {

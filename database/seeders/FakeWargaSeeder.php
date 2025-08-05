@@ -16,7 +16,6 @@ class FakeWargaSeeder extends Seeder
         $maxPerNKK = 5;
         $batchSize = 300;
 
-        // Ambil data RT dan RW yang sesuai
         $rtData = DB::table('rts')
             ->join('rws', 'rts.id_RW', '=', 'rws.id_RW')
             ->select('rts.id_RT', 'rws.id_RW')
@@ -32,7 +31,6 @@ class FakeWargaSeeder extends Seeder
         foreach ($nkkList as $nkk) {
             $anggotaKeluarga = rand(1, $maxPerNKK);
 
-            // Ambil RT dan RW yang cocok
             $selected = $rtData->random();
             $id_RT = $selected->id_RT;
             $id_RW = $selected->id_RW;
@@ -75,7 +73,6 @@ class FakeWargaSeeder extends Seeder
             }
         }
 
-        // Sisanya
         if (!empty($wargaBatch)) {
             DB::table('wargas')->insert($wargaBatch);
         }

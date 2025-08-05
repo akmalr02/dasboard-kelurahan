@@ -36,9 +36,8 @@ export default defineConfig(({ mode }) => ({
             },
         },
     },
-    // Pastikan base URL benar untuk production
     base:
         mode === "production"
-            ? "https://dashboard-kelurahan-production.up.railway.app/build/"
+            ? "https://dashboard-digital.up.railway.app/build/"
             : "/build/",
 }));

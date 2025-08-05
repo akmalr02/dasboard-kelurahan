@@ -204,15 +204,16 @@
                         <div class="space-y-2 text-sm">
                             <p class="flex items-center gap-2">
                                 <span class="text-blue-500">📧</span>
-                                <span>kelurahan.kramat@jakarta.go.id</span>
+                                <span>kramatkelurahan2014@gmail.com</span>
                             </p>
                             <p class="flex items-center gap-2">
                                 <span class="text-green-500">📞</span>
-                                <span>(021) 123-4567</span>
+                                <span>390 9708</span>
                             </p>
                             <p class="flex items-center gap-2">
                                 <span class="text-red-500">📍</span>
-                                <span>Jl. Kramat Raya, Jakarta Pusat</span>
+                                <span>Jl. Kramat Pulo Dalam 2 No.28, RT.1/RW.6, Kramat, Kec. Senen, Kota Jakarta Pusat,
+                                    Daerah Khusus Ibukota Jakarta 10450</span>
                             </p>
                         </div>
                     </div>
