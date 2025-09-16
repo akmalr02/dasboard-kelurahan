@@ -6,28 +6,28 @@
                 @auth
                     @if (Auth::user()->role == 'admin')
                         <a href="{{ route('admin.dashboard') }}" wire:navigate class="flex items-center gap-2">
-                            <img class="w-10 h-10" src="{{ secure_asset('img/logo.png') }}" alt="Logo Kelurahan">
+                            <img class="w-10 h-10" src="{{ asset('img/logo.png') }}" alt="Logo Kelurahan">
                             <span class="text-white font-semibold text-base">Kelurahan Kramat</span>
                         </a>
                     @elseif (Auth::user()->role == 'pengelola_rw')
                         <a href="{{ route('rw.dashboard') }}" wire:navigate class="flex items-center gap-2">
-                            <img class="w-10 h-10" src="{{ secure_asset('img/logo.png') }}" alt="Logo Kelurahan">
+                            <img class="w-10 h-10" src="{{ asset('img/logo.png') }}" alt="Logo Kelurahan">
                             <span class="text-white font-semibold text-base">Kelurahan Kramat</span>
                         </a>
                     @elseif (Auth::user()->role == 'pengelola_rt')
                         <a href="{{ route('rt.dashboard') }}" wire:navigate class="flex items-center gap-2">
-                            <img class="w-10 h-10" src="{{ secure_asset('img/logo.png') }}" alt="Logo Kelurahan">
+                            <img class="w-10 h-10" src="{{ asset('img/logo.png') }}" alt="Logo Kelurahan">
                             <span class="text-white font-semibold text-base">Kelurahan Kramat</span>
                         </a>
                     @elseif (Auth::user()->role == 'warga')
                         <a href="{{ route('warga.dashboard') }}" wire:navigate class="flex items-center gap-2">
-                            <img class="w-10 h-10" src="{{ secure_asset('img/logo.png') }}" alt="Logo Kelurahan">
+                            <img class="w-10 h-10" src="{{ asset('img/logo.png') }}" alt="Logo Kelurahan">
                             <span class="text-white font-semibold text-base">Kelurahan Kramat</span>
                         </a>
                     @endif
                 @else
                     <a href="{{ route('welcome') }}" wire:navigate class="flex items-center gap-2">
-                        <img class="w-10 h-10" src="{{ secure_asset('img/logo.png') }}" alt="Logo Kelurahan">
+                        <img class="w-10 h-10" src="{{ asset('img/logo.png') }}" alt="Logo Kelurahan">
                         <span class="text-white font-semibold text-base">Kelurahan Kramat</span>
                     </a>
                 @endauth
@@ -211,7 +211,7 @@
                             class="text-white hover:bg-sky-700 rounded-md px-3 py-2 text-sm font-medium flex items-center gap-1">
                             <div class="flex -space-x-2 overflow-hidden">
                                 <img class="inline-block size-8 rounded-full ring-2 ring-white"
-                                    src="{{ Auth::user()->foto_profil ? secure_asset('storage/' . Auth::user()->foto_profil) : secure_asset('img/user.jpg') }}"
+                                    src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) : asset('img/user.jpg') }}"
                                     alt="Foto Profil" />
                             </div>
 

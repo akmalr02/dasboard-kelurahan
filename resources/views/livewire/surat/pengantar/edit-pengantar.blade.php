@@ -257,14 +257,14 @@
                         @if ($foto_ktp_lama)
                             <div class="mb-4">
                                 <p class="text-sm text-gray-600 mb-2">Foto KTP saat ini:</p>
-                                <img src="{{ secure_asset('storage/' . $foto_ktp_lama) }}" alt="Foto KTP"
+                                <img src="{{ asset('storage/' . $foto_ktp_lama) }}" alt="Foto KTP"
                                     class="w-32 h-auto rounded border border-gray-300 mb-2">
                                 <div class="flex gap-2">
-                                    <a href="{{ secure_asset('storage/' . $foto_ktp_lama) }}" target="_blank"
+                                    <a href="{{ asset('storage/' . $foto_ktp_lama) }}" target="_blank"
                                         class="px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">
                                         Lihat
                                     </a>
-                                    <a href="{{ secure_asset('storage/' . $foto_ktp_lama) }}" download
+                                    <a href="{{ asset('storage/' . $foto_ktp_lama) }}" download
                                         class="px-3 py-1 text-xs text-white bg-indigo-600 rounded hover:bg-indigo-700">
                                         Download
                                     </a>
@@ -301,11 +301,11 @@
                             <div class="mb-4">
                                 <p class="text-sm text-gray-600 mb-2">File PDF saat ini:</p>
                                 <div class="flex gap-2 mb-2">
-                                    <a href="{{ secure_asset('storage/' . $file_pdf_lama) }}" target="_blank"
+                                    <a href="{{ asset('storage/' . $file_pdf_lama) }}" target="_blank"
                                         class="px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">
                                         Lihat PDF
                                     </a>
-                                    <a href="{{ secure_asset('storage/' . $file_pdf_lama) }}" download
+                                    <a href="{{ asset('storage/' . $file_pdf_lama) }}" download
                                         class="px-3 py-1 text-xs text-white bg-indigo-600 rounded hover:bg-indigo-700">
                                         Download
                                     </a>

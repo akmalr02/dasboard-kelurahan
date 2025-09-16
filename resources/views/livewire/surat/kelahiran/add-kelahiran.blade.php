@@ -141,7 +141,7 @@
                                         </svg>
                                         Sudah Ditandatangani
                                     </span>
-                                    <img src="{{ secure_asset('storage/' . $selectedSurat->file_ttd_admin) }}"
+                                    <img src="{{ asset('storage/' . $selectedSurat->file_ttd_admin) }}"
                                         alt="Tanda Tangan Admin"
                                         class="h-16 w-auto border border-gray-300 rounded bg-white p-2">
                                 </div>

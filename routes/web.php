@@ -12,6 +12,11 @@ Route::get('/', Welcome::class)->name('welcome')->middleware(['guest']);
 
 Route::get('/surat/{jenis}/{id}/download', [ExportSuratController::class, 'download'])->name('surat.download');
 
+Route::get('/error', function () {
+    return view('components.error'); 
+})->name('error.page');
+
+
 require __DIR__ . '/dashboard.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';

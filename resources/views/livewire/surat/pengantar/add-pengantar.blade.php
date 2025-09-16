@@ -155,10 +155,10 @@
                                         <label class="block text-sm font-medium text-gray-600 mb-1">File Surat
                                             (PDF)</label>
                                         <div class="flex gap-3 items-center">
-                                            <a href="{{ secure_asset('storage/' . $selectedSurat->file_pdf) }}"
+                                            <a href="{{ asset('storage/' . $selectedSurat->file_pdf) }}"
                                                 target="_blank"
                                                 class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700">Lihat</a>
-                                            <a href="{{ secure_asset('storage/' . $selectedSurat->file_pdf) }}"
+                                            <a href="{{ asset('storage/' . $selectedSurat->file_pdf) }}"
                                                 download
                                                 class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Download</a>
                                         </div>
@@ -170,10 +170,10 @@
                                     <div class="md:col-span-2 mt-4">
                                         <label class="block text-sm font-medium text-gray-600 mb-1">Foto KTP</label>
                                         <div class="flex gap-3 items-center">
-                                            <a href="{{ secure_asset('storage/' . $selectedSurat->foto_ktp) }}"
+                                            <a href="{{ asset('storage/' . $selectedSurat->foto_ktp) }}"
                                                 target="_blank"
                                                 class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700">Lihat</a>
-                                            <a href="{{ secure_asset('storage/' . $selectedSurat->foto_ktp) }}"
+                                            <a href="{{ asset('storage/' . $selectedSurat->foto_ktp) }}"
                                                 download
                                                 class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Download</a>
                                         </div>
@@ -241,7 +241,7 @@
                             @if ($selectedSurat->file_ttd_rt)
                                 <div class="flex items-center gap-3 mt-1">
                                     <span class="text-green-600">✅ Sudah Ditandatangani</span>
-                                    <img src="{{ secure_asset('storage/' . $selectedSurat->file_ttd_rt) }}"
+                                    <img src="{{ asset('storage/' . $selectedSurat->file_ttd_rt) }}"
                                         alt="TTD RT" class="h-16 border p-1 rounded">
                                 </div>
                             @else
@@ -254,7 +254,7 @@
                             @if ($selectedSurat->file_ttd_rw)
                                 <div class="flex items-center gap-3 mt-1">
                                     <span class="text-green-600">✅ Sudah Ditandatangani</span>
-                                    <img src="{{ secure_asset('storage/' . $selectedSurat->file_ttd_rw) }}"
+                                    <img src="{{ asset('storage/' . $selectedSurat->file_ttd_rw) }}"
                                         alt="TTD RW" class="h-16 border p-1 rounded">
                                 </div>
                             @else

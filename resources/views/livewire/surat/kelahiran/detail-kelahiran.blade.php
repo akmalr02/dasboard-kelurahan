@@ -157,7 +157,7 @@
                         @if (data_get($selectedSurat, 'file_ttd_admin'))
                             <div class="flex items-center space-x-3">
                                 <div class="bg-white p-2 rounded border">
-                                    <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(secure_asset('storage/' . data_get($selectedSurat, 'file_ttd_admin')), 'QRCODE') }}"
+                                    <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(asset('storage/' . data_get($selectedSurat, 'file_ttd_admin')), 'QRCODE') }}"
                                         alt="QR Admin" class="w-16 h-16">
                                 </div>
                                 <span

@@ -19,6 +19,11 @@ class AddPengantarController extends Component
     {
         $user = Auth::user();
 
+        if (!in_array($user->role, ['pengelola_rt', 'pengelola_rw'])) {
+            session()->flash('error', 'Anda tidak memiliki akses.');
+            return $this->redirectRoute('error.page');
+        }
+
         $surat = $this->suratPengantar = SuratPengantar::with('rt', 'rw')
             ->when($user->role === 'pengelola_rt', fn($q) => $q->where('id_rt', $user->id_rt))
             ->when($user->role === 'pengelola_rw', fn($q) => $q->where('id_rw', $user->id_rw))

@@ -3,6 +3,7 @@
 namespace App\Livewire\User\Admin;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -41,9 +42,19 @@ class DataUserController extends Component
         $this->resetPage();
     }
 
+    public function mount()
+    {
+        $user = Auth::user();
+        
+        if (!$user || $user->role !== 'admin') {
+            session()->flash('error', 'Anda tidak memiliki akses.');
+            return redirect()->route('error.page');
+        }
+    }
+
     public function render()
     {
-        $query = User::query();
+        $query = User::query();      
 
         if (!empty(trim($this->search))) {
             $searchTerm = trim($this->search);

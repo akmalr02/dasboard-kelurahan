@@ -125,7 +125,7 @@
         </div>
 
         <div class="hidden md:flex items-center justify-center w-1/2 bg-white-100 p-8">
-            <img src="{{ secure_asset('img/kelurahan.jpg') }}" alt="Login Illustration" class="w-full max-w-md">
+            <img src="{{ asset('img/kelurahan.jpg') }}" alt="Login Illustration" class="w-full max-w-md">
         </div>
     </div>
 </div>
